@@ -1,6 +1,6 @@
 using DataRetrieval
 using Test
 
-@testset "DataRetrieval.jl" begin
-    # Write your tests here.
+@testset "All Tests" begin
+    include("NWIStests.jl")
 end

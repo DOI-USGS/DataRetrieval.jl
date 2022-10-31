@@ -1,5 +1,11 @@
 module DataRetrieval
 
-# Write your package code here.
+using HTTP
+using JSON
+
+# Include utility functions:
+#   URL construction
+include("utils.jl")
+export constructNWISURL
 
 end
