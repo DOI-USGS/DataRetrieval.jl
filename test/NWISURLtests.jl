@@ -1,4 +1,4 @@
-# Tests of NWIS functionality
+# Tests of NWIS URL construction
 
 @testset "NWIS URL Construction" begin
     # URLs are generated using the R dataRetrieval package

@@ -4,6 +4,7 @@ using HTTP
 using JSON
 using DataFrames
 using CSV
+using EzXML
 
 # Include URL construction functions:
 include("ConstructURLs.jl")

@@ -2,5 +2,6 @@ using DataRetrieval
 using Test
 
 @testset "All Tests" begin
-    include("NWIStests.jl")
+    include("NWISURLtests.jl")
+    include("NWISRDBtests.jl")
 end

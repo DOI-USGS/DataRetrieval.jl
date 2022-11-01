@@ -1,5 +1,4 @@
 # Functions to go from NWIS URL to data
-using Infiltrator
 struct FunctionNotDefinedException <: Exception
     var::String
 end
@@ -13,12 +12,11 @@ constructNWISURL() function) and return the associated data.
 function readNWIS(obs_url)
     # do the API GET query
     response = HTTP.get(obs_url)
-    response_body = IOBuffer(String(response.body))
     # then, depending on the URL, do different things
     if occursin("rdb", obs_url) == true
-        df = _readRDB(response_body)
+        df = _readRDB(response)
     elseif occursin("waterml", obs_url) == true
-        df = _readWaterML(response_body)
+        df = _readWaterML(response)
     else
         # get portion of URL associated with return format
         fmt_str = split(split(obs_url, "format")[2], "&")[1]
@@ -31,12 +29,20 @@ function readNWIS(obs_url)
 end
 
 """
-    _readRDB(response_body)
+    _readRDB(response)
 
-Private function to parse the response body buffer object from an RDB query.
+Private function to parse the API response from an RDB query.
+
+Consider padding site number rather than allowing it to be an integer that
+loses the preceeding 0s. R version returns site number as string w/ the full
+8 digits included preceding 0s. Need to resolve the column names as well,
+should be able to read them from the header information somehow.
+R has additional functionality of being able to specify a timezone when
+data is that granular, could add this too.
 """
-function _readRDB(response_body)
-    # init header and content
+function _readRDB(response)
+    response_body = IOBuffer(String(response.body))
+    # init header
     header = String[]
     # loop through lines and populate header and content
     for line in eachline(response_body)
@@ -55,6 +61,12 @@ end
 
 Private function to parse the response body buffer object from a WaterML query.
 """
-function _readWaterML(response_body)
-    throw(FunctionNotDefinedException("Method not developed yet."))
+function _readWaterML(response)
+    # throw error as functionality doesn't work yet...
+    throw(FunctionNotDefinedException("WaterML format not yet supported."))
+
+    body = String(response.body)
+    # parse xml content
+    data = parsexml(body)
+    # need to write intelligent code to parse the xml content into a data frame
 end
