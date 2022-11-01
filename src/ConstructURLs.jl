@@ -1,4 +1,4 @@
-# Utility functions used across the package
+# Functions for constructing URLs to do API queries
 
 """
     constructNWISURL(siteNumbers; parameterCd="00060",
@@ -24,7 +24,7 @@ function constructNWISURL(siteNumbers;
     if service == "qw" service = "qwdata" end
     if service == "meas" service = "measurements" end
     if service == "uv" service = "iv" end
-    baseurl = getbaseURL(service)
+    baseurl = _getbaseURL(service)
     # if sitenumbers is a list or vector > 0, make comma-separated string
     site_txt = "site"
     if (typeof(siteNumbers) != String) & (length(siteNumbers) > 0)
@@ -32,14 +32,20 @@ function constructNWISURL(siteNumbers;
         if service == "qwdata"
             site_txt = "multiple_site_no"
         end
+    elseif (service == "qwdata") & (typeof(siteNumbers) == String)
+        site_txt = "search_site_no"
+    elseif (service == "measurements") || (service == "peak") || (service == "rating")
+        site_txt = "site_no"
     end
     # same for parameterCd or statCd
     param_txt = "ParameterCd"
+    multiple_parameters = false
     if (typeof(parameterCd) != String) & (length(parameterCd) > 0)
         parameterCd = join(parameterCd, ',')
-        if service == "qwdata"
-            param_txt = "multiple_parameter_cds"
-        end
+        multiple_parameters = true
+    end
+    if service == "qwdata"
+        param_txt = "multiple_parameter_cds"
     end
     if (typeof(statCd) != String) & (length(statCd) > 0)
         statCd = join(statCd, ',')
@@ -47,7 +53,7 @@ function constructNWISURL(siteNumbers;
     # append site numbers to the URL - ducktyping the siteNumbers now
     url = string(baseurl, "?$site_txt=$siteNumbers")
     # append parameter code
-    if length(parameterCd) > 0
+    if (length(parameterCd) > 0) && (service != "measurements") && (service != "peak") && (service != "rating")
         url = string(url, "&$param_txt=$parameterCd")
     end
     # append start/end dates
@@ -66,26 +72,36 @@ function constructNWISURL(siteNumbers;
         end
     end
     # append the format
-    format = reformat_format(format, service)
-    url = string(url, "&format=$format")
+    format = _reformat_format(format, service, expanded)
+    if service != "rating"
+        url = string(url, "&format=$format")
+    end
     # add the stat code
     if service == "dv"
         url = string(url, "&StatCd=$statCd")
     end
     # add qwdata information
     if service == "qwdata"
-        url = qwdata_url(url)
+        url = _qwdata_url(url, site_txt, multiple_parameters)
+    end
+    # if peak data add "date_range"
+    if (service == "peak") || (service == "measurements")
+        url = string(url, "&range_selection=date_range")
+    end
+    # if rating data add type
+    if service == "rating"
+        url = string(url, "&file_type=$ratingType")
     end
     # return this URL
     return(url)
 end
 
 """
-    getbaseURL(service)
+    _getbaseURL(service)
 
 Function to get the base URL string based on the service being queried.
 """
-function getbaseURL(service)
+function _getbaseURL(service)
     # create dict with all base URLs
     baseURLs = Dict([
         ("site", "https://waterservices.usgs.gov/nwis/site/"),
@@ -118,24 +134,24 @@ function getbaseURL(service)
 end
 
 """
-    reformat_format(format, service)
+    _reformat_format(format, service)
 
 Function to reformat the format string based on the service queried
 """
-function reformat_format(format, service)
+function _reformat_format(format, service, expanded)
     if format == "xml"
         if service == "gwlevels"
             format = "waterml"
+        elseif service == "peak"
+            format = "rdb"
         else
             format = "waterml,1.1"
         end
     end
 
-    if format == "rdb"
+    if (format == "rdb") && (service != "peak")
         if service == "gwlevels"
             format = "rdb,3.0"
-        elseif service == "qwdata"
-            format = "rdb"
         else
             format = "rdb,1.0"
         end
@@ -157,34 +173,24 @@ function reformat_format(format, service)
         end
     end
 
+    if service == "qwdata"
+        format = "rdb"
+    end
+
+    if (service == "measurements") & (expanded == true)
+        format = "rdb_expanded"
+    end
+
     return(format)
 end
 
 """
-    query(url, parameters)
-
-Performs an API query given a URL and a struct of query parameters.
-"""
-function query(url, parameters)
-    # want to write more sophisticated try/except with some error passing
-    # and additional information/functionality
-
-    # need to read docstring for HTTP.get to handle the parameters
-    response = HTTP.get(url, parameters)
-
-    # return the parsed JSON body (probably also want header & meta info)
-    return(JSON.parse(String(response.body)))
-end
-
-"""
-    qwdata_url(url)
+    _qwdata_url(url)
 
 Function to add additional information for the qwdata query.
 """
-function qwdata_url(url)
+function _qwdata_url(url, site_txt, multiple_parameters)
     param_list = [
-        "param_cd_operator=OR",
-        "list_of_search_criteria=multiple_site_no,multiple_parameter_cds",
         "group_key=NONE",
         "sitefile_output_format=html_table",
         "column_name=agency_cd",
@@ -204,6 +210,21 @@ function qwdata_url(url)
     param_txt = join(param_list, "&")
     add_str = string("&", param_txt)
     url = string(url, add_str)
+
+    search_criteria_txt = "&list_of_search_criteria=multiple_site_no,multiple_parameter_cds"
+    param_op_txt = "&param_cd_operator=AND"
+
+    if site_txt == "search_site_no"
+        url = string(url, "&search_site_no_match_type=exact")
+        search_criteria_txt = "&list_of_search_criteria=search_site_no,multiple_parameter_cds"
+    end
+
+    if multiple_parameters == true
+        param_op_txt = "&param_cd_operator=OR"
+    end
+
+    url = string(url, search_criteria_txt)
+    url = string(url, param_op_txt)
 
     return(url)
 end
