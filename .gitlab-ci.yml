@@ -1,4 +1,4 @@
-image: artifactory.wma.chs.usgs.gov/docker-official-mirror/julia:1.8-buster
+image: artifactory.wma.chs.usgs.gov/docker-official-mirror/julia:latest
 
 variables:
   CONNECT_API_KEY: "$CONNECT_API_KEY"
