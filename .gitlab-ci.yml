@@ -19,9 +19,9 @@ build:
     expire_in: 1 week
 
 deploy:
+  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/python:3.9
   stage: deploy
   script:
-    - python3 install pip
     - pip install rsconnect-python
     - rsconnect deploy html --server "$CONNECT_SERVER" --api-key "$CONNECT_API_KEY" "$CI_PROJECT_DIR"/docs/build/index.html
   rules:
