@@ -1,0 +1,27 @@
+image: artifactory.wma.chs.usgs.gov/docker-official-mirror/julia:1.8-buster
+
+variables:
+  CONNECT_API_KEY: "$CONNECT_API_KEY"
+  CONNECT_SERVER: "$CONNECT_SERVER"
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.build(); Pkg.test()'
+    - julia --project=. -e 'using Pkg; Pkg.add("Documenter"); using Documenter; include("docs/make.jl")'
+  artifacts:
+    paths:
+      - docs/build
+    expire_in: 1 week
+
+deploy:
+  stage: deploy
+  script:
+    - pip install rsconnect-python
+    - rsconnect deploy html --server "$CONNECT_SERVER" --api-key "$CONNECT_API_KEY" "$CI_PROJECT_DIR"/docs/build/index.html
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
