@@ -23,6 +23,6 @@ deploy:
   stage: deploy
   script:
     - pip install rsconnect-python
-    - rsconnect deploy html --server "$CONNECT_SERVER" --api-key "$CONNECT_API_KEY" --name DataRetrieval.jl-doc-dev "$CI_PROJECT_DIR"/docs/build
+    - rsconnect deploy html --server "$CONNECT_SERVER" --api-key "$CONNECT_API_KEY" "$CI_PROJECT_DIR"/docs/build
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
