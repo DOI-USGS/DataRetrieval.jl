@@ -1,8 +1,5 @@
 # DataRetrieval.jl Documentation
 
-```@contents
-```
-
 ## Introduction
 DataRetrieval.jl is a Julia package for retrieving data USGS water data and is
 based off of the popular R package of the same name. Both R and Python
@@ -23,13 +20,3 @@ point to the git repository:
 When developing in Julia, we recommend using the
 [Revise](https://timholy.github.io/Revise.jl/stable/) package so that you do
 not need to keep re-compiling the package every time you make a change.
-
-## API Reference
-
-```@meta
-CurrentModule = DataRetrieval
-```
-
-```@autodocs
-Modules = [DataRetrieval]
-```
