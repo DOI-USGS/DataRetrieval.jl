@@ -11,3 +11,7 @@ constructNWISURL
 ```@docs
 readNWIS
 ```
+
+```@docs
+readNWISdv
+```

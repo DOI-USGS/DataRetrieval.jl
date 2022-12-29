@@ -13,5 +13,6 @@ export constructNWISURL
 # Include functions to read NWIS data
 include("ReadNWIS.jl")
 export readNWIS
+export readNWISdv
 
 end
