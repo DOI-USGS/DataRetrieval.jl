@@ -19,7 +19,7 @@ build:
     expire_in: 1 week
 
 deploy-dev:
-  image: artifactory.wma.chs.usgs.gov/rocker/rstudio:latest
+  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:latest
   stage: deploy
   script:
     # create manifest file for deployment
@@ -30,7 +30,7 @@ deploy-dev:
     - if: '$CI_COMMIT_BRANCH == "dev" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
 
 deploy-main:
-  image: artifactory.wma.chs.usgs.gov/rocker/rstudio:latest
+  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:latest
   stage: deploy
   script:
     # create manifest file for deployment
