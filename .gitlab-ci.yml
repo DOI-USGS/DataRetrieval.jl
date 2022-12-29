@@ -19,19 +19,23 @@ build:
     expire_in: 1 week
 
 deploy-dev:
-  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/python:3.9
+  image: artifactory.wma.chs.usgs.gov/rocker/rstudio:latest
   stage: deploy
   script:
-    - pip install rsconnect-python
-    - rsconnect deploy html --server "$CONNECT_SERVER" --api-key "$CONNECT_API_KEY" --title DataRetrieval.jl-dev "$CI_PROJECT_DIR"/docs/build
+    # create manifest file for deployment
+    - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
+    # deploy docs to RStudio Connect
+    - Rscript -e "task <- connectapi::deploy(connectapi::connect(), connectapi::bundle_dir('$CI_PROJECT_DIR/docs/build'), name='DataRetrieval.jl-dev'); connectapi::poll_task(task)"
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
 
 deploy-main:
-  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/python:3.9
+  image: artifactory.wma.chs.usgs.gov/rocker/rstudio:latest
   stage: deploy
   script:
-    - pip install rsconnect-python
-    - rsconnect deploy html --server "$CONNECT_SERVER" --api-key "$CONNECT_API_KEY" --title DataRetrieval.jl "$CI_PROJECT_DIR"/docs/build
+    # create manifest file for deployment
+    - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
+    # deploy docs to RStudio Connect
+    - Rscript -e "task <- connectapi::deploy(connectapi::connect(), connectapi::bundle_dir('$CI_PROJECT_DIR/docs/build'), name='DataRetrieval.jl'); connectapi::poll_task(task)"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
