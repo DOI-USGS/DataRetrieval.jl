@@ -22,6 +22,8 @@ deploy-dev:
   image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:latest
   stage: deploy
   script:
+    # install packages
+    - Rscript -e "install.packages(c('rsconnect', 'connectapi'))"
     # create manifest file for deployment
     - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
     # deploy docs to RStudio Connect
@@ -33,6 +35,8 @@ deploy-main:
   image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:latest
   stage: deploy
   script:
+    # install packages
+    - Rscript -e "install.packages(c('rsconnect', 'connectapi'))"
     # create manifest file for deployment
     - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
     # deploy docs to RStudio Connect
