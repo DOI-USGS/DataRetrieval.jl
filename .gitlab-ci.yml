@@ -27,7 +27,7 @@ deploy-dev:
     # create manifest file for deployment
     - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
     # deploy docs to RStudio Connect
-    - Rscript -e "task <- connectapi::deploy(connectapi::connect(), connectapi::bundle_dir('$CI_PROJECT_DIR/docs/build'), name='DataRetrieval.jl-dev'); connectapi::poll_task(task)"
+    - Rscript -e "task <- connectapi::deploy(connectapi::connect(), connectapi::bundle_dir('$CI_PROJECT_DIR/docs/build'), name='DataRetrieval-jl-dev'); connectapi::poll_task(task)"
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
 
@@ -40,6 +40,6 @@ deploy-main:
     # create manifest file for deployment
     - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
     # deploy docs to RStudio Connect
-    - Rscript -e "task <- connectapi::deploy(connectapi::connect(), connectapi::bundle_dir('$CI_PROJECT_DIR/docs/build'), name='DataRetrieval.jl'); connectapi::poll_task(task)"
+    - Rscript -e "task <- connectapi::deploy(connectapi::connect(), connectapi::bundle_dir('$CI_PROJECT_DIR/docs/build'), name='DataRetrieval-jl'); connectapi::poll_task(task)"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
