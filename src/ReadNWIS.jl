@@ -10,6 +10,22 @@ end
                startDate="", endDate="", statCd="00003")
 
 Function to obtain daily value data from the NWIS web service.
+
+# Examples
+```jldoctest
+julia> df, response = readNWISdv("01646500", "00060",
+                                 startDate="2010-10-01", endDate="2010-10-01");
+
+julia> df  # df contains the formatted data as a DataFrame
+1×5 DataFrame
+ Row │ agency_cd  site_no   datetime    68478_00060_00003  68478_00060_00003_c ⋯
+     │ String7    String15  String15    String7            String3             ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │ USGS       01646500  2010-10-01  13100              A                   ⋯
+                                                                1 column omitted
+julia> typeof(response)  # response is the unmodified HTTP GET response object
+HTTP.Messages.Response
+```
 """
 function readNWISdv(siteNumbers, parameterCd;
                     startDate="", endDate="", statCd="00003")
@@ -30,6 +46,191 @@ function readNWISdv(siteNumbers, parameterCd;
     # use the readNWIS function to query and return the data
     df, response = readNWIS(url)
     return df, response
+end
+
+"""
+    readNWISpCode(parameterCd)
+
+Function to obtain parameter code information from the NWIS web service.
+
+# Examples
+```jldoctest
+julia> df, response = readNWISpCode("00060");
+
+julia> df  # df contains the formatted data as a DataFrame
+1×13 DataFrame
+ Row │ parameter_cd  group     parm_nm                           epa_equivalen ⋯
+     │ String7       String15  String                            String15      ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │ 00060         Physical  Discharge, cubic feet per second  Not checked   ⋯
+                                                              10 columns omitted
+
+julia> typeof(response)  # response is the unmodified HTTP GET response object
+HTTP.Messages.Response
+```
+"""
+function readNWISpCode(parameterCd)
+    # construct the query URL
+    url = constructNWISURL(
+        "",
+        parameterCd = parameterCd,
+        startDate = "",
+        endDate = "",
+        service = "pCode",
+        statCd = "",
+        format = "rdb",
+        expanded = true,
+        ratingType = "",
+        statReportType = "",
+        statType = ""
+    )
+    # use the readNWIS function to query and return the data
+    df, response = readNWIS(url)
+    return df, response
+end
+
+"""
+    readNWISqw(siteNumbers;
+               startDate="", endDate="", expanded=true)
+
+Function to obtain water quality data from the NWIS web service.
+"""
+function readNWISqw(siteNumbers;
+                    startDate="", endDate="", expanded=true)
+    # construct the query URL
+    url = constructNWISURL(
+        siteNumbers,
+        parameterCd = "",
+        startDate = startDate,
+        endDate = endDate,
+        service = "qw",
+        statCd = "",
+        format = "rdb",
+        expanded = expanded,
+        ratingType = "",
+        statReportType = "",
+        statType = ""
+    )
+    # use the readNWIS function to query and return the data
+    df, response = readNWIS(url)
+    return df, response
+end
+
+"""
+    readNWISqwdata(siteNumbers;
+                   startDate="", endDate="", expanded=true)
+
+Alias to `readNWISqw()`.
+"""
+function readNWISqwdata(siteNumbers;
+                        startDate="", endDate="", expanded=true)
+    return readNWISqw(siteNumbers;
+                      startDate=startDate, endDate=endDate, expanded=expanded)
+end
+
+"""
+    readNWISsite(siteNumbers)
+
+Function to obtain site information from the NWIS web service.
+
+# Examples
+```jldoctest
+julia> df, response = readNWISsite("05114000");
+
+julia> df  # df contains the formatted data as a DataFrame
+1×12 DataFrame
+ Row │ agency_cd  site_no   station_nm                    site_tp_cd  dec_lat_ ⋯
+     │ String7    String15  String31                      String3     String15 ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │ USGS       05114000  SOURIS RIVER NR SHERWOOD, ND  ST          48.99001 ⋯
+                                                               8 columns omitted
+
+julia> typeof(response)  # response is the unmodified HTTP GET response object
+HTTP.Messages.Response
+```
+"""
+function readNWISsite(siteNumbers)
+    # construct the query URL
+    url = constructNWISURL(
+        siteNumbers,
+        parameterCd = "",
+        startDate = "",
+        endDate = "",
+        service = "site",
+        statCd = "",
+        format = "rdb",
+        expanded = true,
+        ratingType = "",
+        statReportType = "",
+        statType = ""
+    )
+    # use the readNWIS function to query and return the data
+    df, response = readNWIS(url)
+    return df, response
+end
+
+"""
+    readNWISunit(siteNumbers, parameterCd; startDate="", endDate="")
+
+Function to obtain instantaneous value data from the NWIS web service.
+
+# Examples
+```jldoctest
+julia> df, response = readNWISunit("01646500", "00060");
+
+julia> df  # df contains the formatted data as a DataFrame
+1×6 DataFrame
+ Row │ agency_cd  site_no   datetime          tz_cd    69928_00060  69928_0006 ⋯
+     │ String7    String15  String31          String3  String7      String3    ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │ USGS       01646500  2022-12-30 12:45  EST      10600        P          ⋯
+                                                                1 column omitted
+
+julia> typeof(response)  # response is the unmodified HTTP GET response object
+HTTP.Messages.Response
+```
+"""
+function readNWISunit(siteNumbers, parameterCd;
+                      startDate="", endDate="")
+    # construct the query URL
+    url = constructNWISURL(
+        siteNumbers,
+        parameterCd = parameterCd,
+        startDate = startDate,
+        endDate = endDate,
+        service = "uv",
+        statCd = "",
+        format = "rdb",
+        expanded = true,
+        ratingType = "",
+        statReportType = "",
+        statType = ""
+    )
+    # use the readNWIS function to query and return the data
+    df, response = readNWIS(url)
+    return df, response
+end
+
+"""
+    readNWISuv(siteNumbers, parameterCd; startDate="", endDate="")
+
+Alias for `readNWISunit()`.
+"""
+function readNWISuv(siteNumbers, parameterCd;
+                    startDate="", endDate="")
+    return readNWISunit(siteNumbers, parameterCd;
+                        startDate=startDate, endDate=endDate)
+end
+
+"""
+    readNWISiv(siteNumbers, parameterCd; startDate="", endDate="")
+
+Alias for `readNWISunit()`.
+"""
+function readNWISiv(siteNumbers, parameterCd;
+                    startDate="", endDate="")
+    return readNWISunit(siteNumbers, parameterCd;
+                        startDate=startDate, endDate=endDate)
 end
 
 """
@@ -68,8 +269,18 @@ data is that granular, could add this too.
 function _readRDB(response)
     # read the response body into a dataframe
     df = DataFrame(CSV.File(response.body; comment="#"))
-    # filter based on date-time column
-    df = filter(:datetime => x -> length(x) >= 10, df)
+    if "datetime" in names(df)
+        # filter based on date-time column
+        df = filter(:datetime => x -> length(x) >= 10, df)
+    elseif "dec_lat_va" in names(df)
+        # filter based on some latitude length expectation
+        df = filter(:dec_lat_va => x -> length(x) >= 4, df)
+    elseif "parameter_cd" in names(df)
+        # filter based on some parameter code length expectation
+        df = filter(:parameter_cd => x -> length(x) >= 4, df)
+    else
+        println("no datetime, latitude, or parameter_cd column found, returning all data")
+    end
     # return the data frame
     return df
 end

@@ -24,6 +24,17 @@ function constructNWISURL(siteNumbers;
     if service == "qw" service = "qwdata" end
     if service == "meas" service = "measurements" end
     if service == "uv" service = "iv" end
+    # pCode handling
+    if service == "pCode"
+        if typeof(parameterCd) == Vector{String} && length(parameterCd) == 1
+            service = "pCodeSingle"
+        elseif typeof(parameterCd) == String
+            service = "pCodeSingle"
+        else
+            service = "pCode"
+        end
+    end
+    # get the base URL for the query
     baseurl = _getbaseURL(service)
     # if sitenumbers is a list or vector > 0, make comma-separated string
     site_txt = "site"
@@ -47,14 +58,21 @@ function constructNWISURL(siteNumbers;
     if service == "qwdata"
         param_txt = "multiple_parameter_cds"
     end
+    if service == "pCode" || service == "pCodeSingle"
+        param_txt = "parm_nm_cd"
+    end
     if (typeof(statCd) != String) & (length(statCd) > 0)
         statCd = join(statCd, ',')
     end
-    # append site numbers to the URL - ducktyping the siteNumbers now
-    url = string(baseurl, "?$site_txt=$siteNumbers")
+    if (service in ["pCode", "pCodeSingle"]) == false
+        # append site numbers to the URL - ducktyping the siteNumbers now
+        url = string(baseurl, "?$site_txt=$siteNumbers")
+    end
     # append parameter code
-    if (length(parameterCd) > 0) && (service != "measurements") && (service != "peak") && (service != "rating")
+    if (length(parameterCd) > 0) && ((service in ["measurements", "peak", "rating", "pCode", "pCodeSingle"]) == false)
         url = string(url, "&$param_txt=$parameterCd")
+    elseif service in ["pCode", "pCodeSingle"]
+        url = string(baseurl, "?$param_txt=$parameterCd")
     end
     # append start/end dates
     if length(startDate) > 0
@@ -73,8 +91,10 @@ function constructNWISURL(siteNumbers;
     end
     # append the format
     format = _reformat_format(format, service, expanded)
-    if service != "rating"
+    if (service in ["rating", "pCode", "pCodeSingle"]) == false
         url = string(url, "&format=$format")
+    elseif service in ["pCode", "pCodeSingle"]
+        url = string(url, "&fmt=$format")
     end
     # add the stat code
     if service == "dv"
@@ -152,6 +172,8 @@ function _reformat_format(format, service, expanded)
     if (format == "rdb") && (service != "peak")
         if service == "gwlevels"
             format = "rdb,3.0"
+        elseif service in ["pCode", "pCodeSingle"]
+            format = "rdb"
         else
             format = "rdb,1.0"
         end

@@ -14,5 +14,12 @@ export constructNWISURL
 include("ReadNWIS.jl")
 export readNWIS
 export readNWISdv
+export readNWISpCode
+export readNWISqw
+export readNWISqwdata
+export readNWISsite
+export readNWISunit
+export readNWISuv
+export readNWISiv
 
 end

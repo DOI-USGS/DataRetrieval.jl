@@ -1,5 +1,7 @@
 using Documenter, DataRetrieval
 
+DocMeta.setdocmeta!(DataRetrieval, :DocTestSetup, :(using DataRetrieval); recursive=true)
+
 makedocs(
     modules = [DataRetrieval],
     sitename = "DataRetrieval.jl Documentation",
