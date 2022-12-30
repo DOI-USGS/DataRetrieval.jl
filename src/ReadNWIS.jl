@@ -176,14 +176,16 @@ Function to obtain instantaneous value data from the NWIS web service.
 
 # Examples
 ```jldoctest
-julia> df, response = readNWISunit("01646500", "00060");
+julia> df, response = readNWISunit("01646500", "00060",
+                                   startDate="2022-12-29",
+                                   endDate="2022-12-29");
 
-julia> df  # df contains the formatted data as a DataFrame
-1×6 DataFrame
+julia> first(df)  # df contains the formatted data as a DataFrame
+DataFrameRow
  Row │ agency_cd  site_no   datetime          tz_cd    69928_00060  69928_0006 ⋯
      │ String7    String15  String31          String3  String7      String3    ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ USGS       01646500  2022-12-30 12:45  EST      10600        P          ⋯
+   1 │ USGS       01646500  2022-12-29 00:00  EST      12700        P          ⋯
                                                                 1 column omitted
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
