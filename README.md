@@ -61,7 +61,7 @@ julia> response.status
 ## Documentation
 
 The documentation for the package is currently available on RStudio Connect,
-and can be found [here](https://rconnect.chs.usgs.gov/DataRetrieval-jl-main/).
+and can be found [here](https://rconnect.chs.usgs.gov/DataRetrieval-jl/).
 
 ## Contributing
 
