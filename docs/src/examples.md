@@ -1,5 +1,11 @@
 # Examples
 
+## Index
+
+```@contents
+Pages = ["examples.md"]
+```
+
 ## Examining Site 01491000
 
 In this example we fetch some data for site "01491000" located on the
@@ -47,4 +53,49 @@ API host.
 
 ```@example 01491000
 response.request
+```
+
+## Plotting One Day's Flow Data for Site 01646500
+
+In this example we will plot the flow data for one day for site "01646500".
+Site "01646500" is located on the Potomac River near Washington D.C. at the
+Little Falls pump station.
+
+First we can query the instantaneous flow data from December 1, 2022:
+
+```@example 01646500
+using DataRetrieval
+siteNumber = "01646500"
+df, response = readNWISiv(siteNumber, "00060", startDate="2022-12-01",
+                          endDate="2022-12-01");
+# display the first row of the data frame
+first(df)
+```
+
+We have requested discharge data using the parameter code "00060". We can
+get additional information about this parameter code, such as the units
+discharge is measured in, by using the `readNWISpCode` function.
+
+```@example 01646500
+pcodedf, response = readNWISpCode("00060")
+pcodedf
+```
+
+We can see that the units for discharge are cubic feet per second. Now when
+we plot the discharge data, we can properly label the y-axis.
+
+```@example 01646500
+# convert the date time column to a DateTime type
+using Dates
+timestamps = Dates.DateTime.(df.datetime, "yyy-mm-dd HH:MM");
+# convert the discharge values to a float type
+discharge = map(x->parse(Float64,x),df."69928_00060");
+# make the plot
+using Plots
+plot(timestamps, discharge,
+     title="Discharge at Little Falls Pump Station, Dec. 1, 2022",
+     ylabel="Discharge (ft³/s)",
+     xlabel="Timestamp",
+     xrotation=60,
+     label="Discharge")
 ```
