@@ -97,5 +97,6 @@ plot(timestamps, discharge,
      ylabel="Discharge (ft³/s)",
      xlabel="Timestamp",
      xrotation=60,
-     label="Discharge")
+     label="Discharge",
+     dpi=200)
 ```
