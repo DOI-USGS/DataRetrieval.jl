@@ -1,7 +1,60 @@
+image: artifactory.wma.chs.usgs.gov/docker-official-mirror/julia:latest
+
+variables:
+  CONNECT_API_KEY: "$CONNECT_API_KEY"
+  CONNECT_SERVER: "$CONNECT_SERVER"
+
+stages:
+  - build
+  - deploy
+  - validate
+
+build:
+  stage: build
+  script:
+    - julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.build(); Pkg.test()'
+    - julia --project=. -e 'using Pkg; Pkg.add("Documenter"); using Documenter; include("docs/make.jl")'
+  artifacts:
+    paths:
+      - docs/build
+    expire_in: 1 week
+
+deploy-dev:
+  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:latest
+  stage: deploy
+  script:
+    # install packages
+    - Rscript -e "install.packages(c('rsconnect', 'connectapi'))"
+    # create manifest file for deployment
+    - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
+    # deploy docs to RStudio Connect
+    - Rscript -e "task <- connectapi::deploy(connectapi::connect(), connectapi::bundle_dir('$CI_PROJECT_DIR/docs/build'), name='DataRetrieval-jl-dev'); connectapi::poll_task(task)"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
+
+deploy-main:
+  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:latest
+  stage: deploy
+  script:
+    # install packages
+    - Rscript -e "install.packages(c('rsconnect', 'connectapi'))"
+    # create manifest file for deployment
+    - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
+    # deploy docs to RStudio Connect
+    - Rscript -e "task <- connectapi::deploy(connectapi::connect(), connectapi::bundle_dir('$CI_PROJECT_DIR/docs/build'), name='DataRetrieval-jl'); connectapi::poll_task(task)"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
+
 Validate Inventory:
-    image: ${INTERNAL_REGISTRY}ghsc/hazdev/inventory-validator:latest
+    stage: validate
+    image: ${INTERNAL_REGISTRY}software/software-management:latest
     script:
-        - validate.sh code.json
+      - software-management review
+        --project "${CI_PROJECT_PATH}"
+        --ref "${CI_COMMIT_BRANCH}"
+        --type "provisional"
+        --token "${GIT_TOKEN_CUSTOM}"
     tags:
         - chs-shared
-
+    rules:
+      - if: '$CI_COMMIT_BRANCH == "main"'
