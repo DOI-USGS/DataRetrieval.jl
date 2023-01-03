@@ -7,6 +7,7 @@ variables:
 stages:
   - build
   - deploy
+  - validate
 
 build:
   stage: build
@@ -43,3 +44,15 @@ deploy-main:
     - Rscript -e "task <- connectapi::deploy(connectapi::connect(), connectapi::bundle_dir('$CI_PROJECT_DIR/docs/build'), name='DataRetrieval-jl'); connectapi::poll_task(task)"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
+
+Validate Inventory:
+    stage: validate
+    image: ${INTERNAL_REGISTRY}software/software-management:latest
+    script:
+      - software-management review
+        --project "${CI_PROJECT_PATH}"
+        --ref "${CI_COMMIT_BRANCH}"
+        --type "provisional"
+        --token "${GIT_TOKEN_CUSTOM}"
+    tags:
+        - chs-shared
