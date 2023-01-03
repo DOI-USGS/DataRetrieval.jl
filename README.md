@@ -72,7 +72,7 @@ for more information.
 ## License
 
 The package is licensed per the
-[LICENSE.md]](https://code.usgs.gov/wma/iow/computational-tools/DataRetrieval.jl/-/blob/main/LICENSE)
+[LICENSE.md](https://code.usgs.gov/wma/iow/computational-tools/DataRetrieval.jl/-/blob/main/LICENSE)
 file.
 
 ## Acknowledgements
