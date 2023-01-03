@@ -56,3 +56,5 @@ Validate Inventory:
         --token "${GIT_TOKEN_CUSTOM}"
     tags:
         - chs-shared
+    rules:
+      - if: '$CI_COMMIT_BRANCH == "main"'
