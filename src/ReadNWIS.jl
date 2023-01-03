@@ -52,6 +52,7 @@ end
     readNWISpCode(parameterCd)
 
 Function to obtain parameter code information from the NWIS web service.
+As currently implemented, support for multiple parameter codes is not included.
 
 # Examples
 ```jldoctest
@@ -97,6 +98,9 @@ Function to obtain water quality data from the NWIS web service.
 """
 function readNWISqw(siteNumbers;
                     startDate="", endDate="", expanded=true)
+    # throw error as functionality doesn't work yet...
+    throw(FunctionNotDefinedException(
+        "qwdata service querying functionality has not been developed yet."))
     # construct the query URL
     url = constructNWISURL(
         siteNumbers,
