@@ -24,8 +24,7 @@ deploy-dev:
   stage: deploy
   script:
     # install packages
-    - Rscript -e "install.packages(c('rsconnect', 'remotes'))"
-    - Rscript -e "remotes::install_github('rstudio/connectapi')"
+    - Rscript -e "install.packages(c('rsconnect', 'connectapi'))"
     # create manifest file for deployment
     - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
     # deploy docs to RStudio Connect
@@ -38,8 +37,7 @@ deploy-main:
   stage: deploy
   script:
     # install packages
-    - Rscript -e "install.packages(c('rsconnect', 'remotes'))"
-    - Rscript -e "remotes::install_github('rstudio/connectapi')"
+    - Rscript -e "install.packages(c('rsconnect', 'connectapi'))"
     # create manifest file for deployment
     - Rscript -e "rsconnect::writeManifest(appDir='$CI_PROJECT_DIR/docs/build')"
     # deploy docs to RStudio Connect
