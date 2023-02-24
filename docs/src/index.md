@@ -5,9 +5,9 @@ DataRetrieval.jl is a Julia package for retrieving data USGS water data and is
 based off of the popular R package of the same name. Both R and Python
 versions of data retrieval are available:
 [R](https://github.com/DOI-USGS/dataRetrieval),
-[Python](https://github.com/USGS-python/dataretrieval). Development of the
+[Python](https://github.com/DOI-USGS/dataretrieval-python). Development of the
 package currently takes place on GitLab, in the
-[DataRetrieval.jl repository](https://code.usgs.gov/wma/iow/computational-tools/DataRetrieval.jl).
+[DataRetrieval.jl repository](https://code.usgs.gov/water/computational-tools/DataRetrieval.jl).
 
 ## Installation
 
@@ -16,7 +16,7 @@ install the development version, you can use the Julia package manager and
 point to the git repository:
 
 ```julia
-] add https://code.usgs.gov/wma/iow/computational-tools/DataRetrieval.jl.git
+] add https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git
 ```
 
 When developing in Julia, we recommend using the
