@@ -250,3 +250,17 @@ function _qwdata_url(url, site_txt, multiple_parameters)
 
     return(url)
 end
+
+"""
+    constructWQPURL(service)
+
+Function to construct the URL for the WQP service.
+"""
+function constructWQPURL(service)
+    # get base URL
+    url = _getbaseURL(service)
+    # add ?
+    url = string(url, "?")
+    # return this URL
+    return(url)
+end

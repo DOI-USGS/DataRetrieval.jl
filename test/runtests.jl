@@ -7,4 +7,5 @@ using DataFrames
     include("NWISURLtests.jl")
     include("NWISRDBtests.jl")
     include("NWISquerytests.jl")
+    include("WQPtests.jl")
 end
