@@ -10,6 +10,7 @@ using Plots
 # Include URL construction functions:
 include("ConstructURLs.jl")
 export constructNWISURL
+export constructWQPURL
 
 # Include functions to read NWIS data
 include("ReadNWIS.jl")

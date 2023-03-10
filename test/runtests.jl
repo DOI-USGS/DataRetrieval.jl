@@ -8,4 +8,5 @@ using DataFrames
     include("NWISRDBtests.jl")
     include("NWISquerytests.jl")
     include("WQPtests.jl")
+    include("Utilitiestests.jl")
 end
