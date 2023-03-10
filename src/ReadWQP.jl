@@ -6,7 +6,18 @@ Flexible querying of the WQP. See other functions for specific queries.
 
 # Examples
 ```jldoctest
+julia> df, response = readWQPdata("Result",
+                                  lat="44.2", long="-88.9", within="0.5");
 
+julia> first(df)[1:3]
+DataFrameRow
+ Row │ OrganizationIdentifier  OrganizationFormalName             ActivityIdentifier
+     │ InlineStrings.String15  String                             String31
+─────┼───────────────────────────────────────────────────────────────────────────────
+   1 │ WIDNR_WQX               Wisconsin Department of Natural …  WIDNR_WQX-35940585
+
+julia> typeof(response)  # response is the unmodified HTTP GET response object
+HTTP.Messages.Response
 ```
 """
 function readWQPdata(service; kwargs...)
@@ -22,18 +33,14 @@ Query the WQP for results.
 
 # Examples
 ```jldoctest
-julia> df, response = readWQPresults(lat="44.2", long="-88.9", within="0.5")
+julia> df, response = readWQPresults(lat="44.2", long="-88.9", within="0.5");
 
 julia> first(df)[1:3]
-
-julia> typeof(response)  # response is the unmodified HTTP GET response object
-HTTP.Messages.Response
-```
-
-```jldoctest
-julia> df, response = readWQPresults(bBox="-92.8,44.2,-88.9,46.0")
-
-julia> first(df)[1:3]
+DataFrameRow
+ Row │ OrganizationIdentifier  OrganizationFormalName             ActivityIdentifier
+     │ InlineStrings.String15  String                             String31
+─────┼───────────────────────────────────────────────────────────────────────────────
+   1 │ WIDNR_WQX               Wisconsin Department of Natural …  WIDNR_WQX-35940585
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
@@ -52,9 +59,14 @@ Function to search WQP for sites within a region with specific data.
 
 # Examples
 ```jldoctest
-julia> df, response = whatWQPsites(lat="44.2", long="-88.9", within="2.5")
+julia> df, response = whatWQPsites(lat="44.2", long="-88.9", within="2.5");
 
 julia> first(df)[1:3]
+DataFrameRow
+ Row │ OrganizationIdentifier  OrganizationFormalName             MonitoringLocationIdentifier
+     │ InlineStrings.String15  String                             InlineStrings.String31
+─────┼─────────────────────────────────────────────────────────────────────────────────────────
+   1 │ USGS-WI                 USGS Wisconsin Water Science Cen…  USGS-441159088505801
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
@@ -73,9 +85,14 @@ Function to search WQP for organizations within a region with specific data.
 
 # Examples
 ```jldoctest
-julia> df, response = whatWQPorganizations()
+julia> df, response = whatWQPorganizations(huc="12");
 
 julia> first(df)[1:3]
+DataFrameRow
+ Row │ OrganizationIdentifier  OrganizationFormalName         OrganizationDescriptionText
+     │ InlineStrings.String31  String                         Union{Missing, String}
+─────┼────────────────────────────────────────────────────────────────────────────────────
+   1 │ ARS                     Agricultural Research Service  missing
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
@@ -94,9 +111,14 @@ Function to search WQP for projects within a region with specific data.
 
 # Examples
 ```jldoctest
-julia> df, response = whatWQPprojects(huc="19")
+julia> df, response = whatWQPprojects(huc="19");
 
 julia> first(df)[1:3]
+DataFrameRow
+ Row │ OrganizationIdentifier  OrganizationFormalName             ProjectIdentifier
+     │ InlineStrings.String31  String                             String
+─────┼──────────────────────────────────────────────────────────────────────────────
+   1 │ 21AKBCH                 Alaska Department of Environment…  AK164406
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
@@ -117,9 +139,14 @@ Function to search WQP for activities within a region with specific data.
 ```jldoctest
 julia> df, response = whatWQPactivities(statecode="US:11",
                                         startDateLo="12-30-2019",
-                                        startDateHi="01-01-2020")
+                                        startDateHi="01-01-2020");
 
 julia> first(df)[1:3]
+DataFrameRow
+ Row │ OrganizationIdentifier  OrganizationFormalName             ActivityIdentifier
+     │ InlineStrings.String7   String                             String31
+─────┼───────────────────────────────────────────────────────────────────────────────
+   1 │ USGS-MD                 USGS Maryland Water Science Cent…  nwismd.01.02000322
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
@@ -141,9 +168,14 @@ Function to search WQP for detection limits within a region with specific data.
 julia> df, response = whatWQPdetectionLimits(statecode="US:44",
                                              characteristicName="Nitrite",
                                              startDateLo="01-01-2021",
-                                             startDateHi="02-20-2021")
+                                             startDateHi="02-20-2021");
 
 julia> first(df)[1:3]
+DataFrameRow
+ Row │ OrganizationIdentifier  OrganizationFormalName             ActivityIdentifier
+     │ InlineStrings.String7   String                             String31
+─────┼───────────────────────────────────────────────────────────────────────────────
+   1 │ USGS-MA                 USGS Massachusetts Water Science…  nwisma.01.02100548
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
@@ -163,9 +195,14 @@ Function to search WQP for habitat metrics within a region with specific data.
 
 # Examples
 ```jldoctest
-julia> df, response = whatWQPhabitatMetrics(statecode="US:44")
+julia> df, response = whatWQPhabitatMetrics(statecode="US:44");
 
 julia> first(df)[1:3]
+DataFrameRow
+ Row │ OrganizationIdentifier  MonitoringLocationIdentifier  IndexIdentifier
+     │ InlineStrings.String15  InlineStrings.String31        String
+─────┼───────────────────────────────────────────────────────────────────────────────
+   1 │ NARS_WQX                NARS_WQX-NEWS04-4201          PH:NEWS04-4201:1:BKA_Q3
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
@@ -186,9 +223,14 @@ Function to search WQP for project weights within a region with specific data.
 ```jldoctest
 julia> df, response = whatWQPprojectWeights(statecode="US:38",
                                             startDateLo="01-01-2006",
-                                            startDateHi="01-01-2009")
+                                            startDateHi="01-01-2008");
 
 julia> first(df)[1:3]
+DataFrameRow
+ Row │ OrganizationIdentifier  OrganizationFormalName             ProjectIdentifier
+     │ InlineStrings.String15  String                             String31
+─────┼───────────────────────────────────────────────────────────────────────────────────────
+   1 │ NARS_WQX                EPA National Aquatic Resources S…  NARS_NLA2007_ECOREGION_NPL
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
@@ -208,14 +250,16 @@ Function to search WQP for activity metrics within a region with specific data.
 
 # Examples
 ```jldoctest
-julia> df, response = whatWQPactivityMetrics(statecode="US:38", startDateLo="07-01-2006", startDateHi="12-01-2006")
+julia> df, response = whatWQPactivityMetrics(statecode="US:38",
+                                             startDateLo="07-01-2006",
+                                             startDateHi="12-01-2006");
 
 julia> first(df)[1:3]
 DataFrameRow
- Row │ OrganizationIdentifier  OrganizationFormalName             MonitoringLocationIdentifier
-     │ InlineStrings.String15  String                             InlineStrings.String31
-─────┼─────────────────────────────────────────────────────────────────────────────────────────
-   1 │ USGS-WI                 USGS Wisconsin Water Science Cen…  USGS-441159088505801
+ Row │ OrganizationIdentifier  OrganizationFormalName        MonitoringLocationIdentifier
+     │ InlineStrings.String15  InlineStrings.String31        InlineStrings.String31
+─────┼────────────────────────────────────────────────────────────────────────────────────
+   1 │ EMAP_GRE                EMAP-Great Rivers Ecosystems  EMAP_GRE-GRE06604-1268
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
