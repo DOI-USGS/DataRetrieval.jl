@@ -16,6 +16,10 @@ CurrentModule = DataRetrieval
 ```
 
 ```@docs
+readNWIS
+```
+
+```@docs
 readNWISdv
 ```
 
@@ -32,6 +36,10 @@ readNWISqwdata
 ```
 
 ```@docs
+readNWISsite
+```
+
+```@docs
 readNWISunit
 ```
 
@@ -44,9 +52,49 @@ readNWISiv
 ```
 
 ```@docs
+readWQPdata
+```
+
+```@docs
+readWQPresults
+```
+
+```@docs
+whatWQPsites
+```
+
+```@docs
+whatWQPorganizations
+```
+
+```@docs
+whatWQPprojects
+```
+
+```@docs
+whatWQPactivities
+```
+
+```@docs
+whatWQPdetectionLimits
+```
+
+```@docs
+whatWQPhabitatMetrics
+```
+
+```@docs
+whatWQPprojectWeights
+```
+
+```@docs
+whatWQPactivityMetrics
+```
+
+```@docs
 constructNWISURL
 ```
 
 ```@docs
-readNWIS
+constructWQPURL
 ```
