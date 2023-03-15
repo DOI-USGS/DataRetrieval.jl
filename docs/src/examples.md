@@ -40,7 +40,7 @@ January of 1980 below.
 
 ```@example 01491000
 df, response = readNWISdv(siteNumber, "00060",
-                          startDate="1980-01-01", endDate="1980-01-03")
+                          startDate="1980-01-01", endDate="1980-01-03");
 
 # print the data frame containing discharge values
 df
@@ -77,7 +77,7 @@ get additional information about this parameter code, such as the units
 discharge is measured in, by using the `readNWISpCode` function.
 
 ```@example 01646500
-pcodedf, response = readNWISpCode("00060")
+pcodedf, response = readNWISpCode("00060");
 pcodedf
 ```
 
@@ -99,4 +99,18 @@ plot(timestamps, discharge,
      xrotation=60,
      label="Discharge",
      dpi=200)
+```
+
+## Identifying Water Quality Sites with Chloride Measurements
+
+In this example we will identify sites that have chloride measurements
+in the state of New Jersey, which is represented by the state code "US:34".
+To do this we query the Water Quality Portal using the `whatWQPsites` function.
+
+```@example NJchloride
+using DataRetrieval
+njcl, response = whatWQPsites(statecode="US:34",
+                              characteristicName="Chloride");
+# print the size of the data frame (rows x columns)
+size(njcl)
 ```

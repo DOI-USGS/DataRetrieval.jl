@@ -4,6 +4,32 @@
 
 Flexible querying of the WQP. See other functions for specific queries.
 
+# Arguments
+- `service::String`: The WQP service to query. One of "Result", "Station",
+  "Organization", "Project", "Activity", "ResultDetectionQuantitationLimit",
+  "BiologicalMetric", "ProjectMonitoringLocationWeighting", or
+  "ActivityMetric".
+
+# Keyword Arguments
+- `siteid::String`: Concatenate an agency code, a hyphen ("-"), and a
+  site-identification number.
+- `statecode::String`: State code to search within. Concatenate 'US', a
+  colon (":"), and a FIPS numeric code (Example: Illinois is US:17).
+- `countycode::String`: FIPS county code to search within.
+- `huc::String`: One or more eight-digit HUC codes, delimited by semicolons.
+- `bBox::String`: Bounding box to search within. Format is
+  "minx,miny,maxx,maxy" (Example: bBox="-92.8,44.2,-88.9,46.0").
+- `lat::String`: Latitude for radial search in decimal degrees, WGS84.
+- `long::String`: Longitude for radial search in decimal degrees, WGS84.
+- `within::String`: Distance for radial search in decimal miles.
+- `pCode::String`: One or more five-digit USGS parameter codes, delimited by
+  semicolons.
+- `startDateLo::String`: Start date for search in MM-DD-YYYY format.
+- `startDateHi::String`: End date for search in MM-DD-YYYY format.
+- `characteristicName::String`: One or more characteristic names, delimited by
+  semicolons. (See https://www.waterqualitydata.us/public_srsnames/
+  for available characteristic names).
+
 # Examples
 ```jldoctest
 julia> df, response = readWQPdata("Result",
