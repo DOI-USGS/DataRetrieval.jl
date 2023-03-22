@@ -48,7 +48,7 @@ open(joinpath(@__DIR__, "src", "disclaimer.md"), "w") do io
     # Write the modified contents
     println(io, "# Disclaimer")
     println(io, "")
-    for line in eachline(joinpath(dirname(@__DIR__), "LICENSE.md"))
+    for line in eachline(joinpath(dirname(@__DIR__), "DISCLAIMER.md"))
         line = replace(line, "[DISCLAIMER.md](Disclaimer.md)" => "[Disclaimer](@ref)")
         println(io, "> ", line)
     end

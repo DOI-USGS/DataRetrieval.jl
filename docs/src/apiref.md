@@ -9,13 +9,11 @@ Documentation for `DataRetrieval.jl`'s public functions.
 Pages = ["apiref.md"]
 ```
 
-## Reference
-
 ```@meta
 CurrentModule = DataRetrieval
 ```
 
-### NWIS Functions
+## NWIS Functions
 Functions that are related to the
 [National Water Information System(NWIS)](https://waterdata.usgs.gov/nwis).
 
@@ -55,7 +53,7 @@ readNWISuv
 readNWISiv
 ```
 
-### WQP Functions
+## WQP Functions
 Functions that are related to the
 [Water Quality Portal](https://waterqualitydata.us/).
 
