@@ -15,6 +15,10 @@ Pages = ["apiref.md"]
 CurrentModule = DataRetrieval
 ```
 
+### NWIS Functions
+Functions that are related to the
+[National Water Information System(NWIS)](https://waterdata.usgs.gov/nwis).
+
 ```@docs
 readNWIS
 ```
@@ -50,6 +54,10 @@ readNWISuv
 ```@docs
 readNWISiv
 ```
+
+### WQP Functions
+Functions that are related to the
+[Water Quality Portal](https://waterqualitydata.us/).
 
 ```@docs
 readWQPdata
