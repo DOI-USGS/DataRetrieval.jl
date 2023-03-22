@@ -1,6 +1,4 @@
 # Functions to go from NWIS URL to data
-using Infiltrator
-
 struct FunctionNotDefinedException <: Exception
     var::String
 end
@@ -247,7 +245,7 @@ Function to take an NWIS url (typically constructed using the
 """
 function readNWIS(obs_url)
     # do the API GET query
-    response = HTTP.get(obs_url)
+    response = _custom_get(obs_url)
     # then, depending on the URL, do different things
     if occursin("rdb", obs_url) == true
         df = _readRDB(response)

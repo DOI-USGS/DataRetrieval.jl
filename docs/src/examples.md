@@ -6,7 +6,11 @@
 Pages = ["examples.md"]
 ```
 
-## Examining Site 01491000
+## NWIS Examples
+These examples use data retrieved from the
+[National Water Information System(NWIS)](https://waterdata.usgs.gov/nwis).
+
+### Examining Site 01491000
 
 In this example we fetch some data for site "01491000" located on the
 Choptank River near Greensboro, MD.
@@ -40,7 +44,7 @@ January of 1980 below.
 
 ```@example 01491000
 df, response = readNWISdv(siteNumber, "00060",
-                          startDate="1980-01-01", endDate="1980-01-03")
+                          startDate="1980-01-01", endDate="1980-01-03");
 
 # print the data frame containing discharge values
 df
@@ -55,7 +59,7 @@ API host.
 response.request
 ```
 
-## Plotting One Day's Flow Data for Site 01646500
+### Plotting One Day's Flow Data for Site 01646500
 
 In this example we will plot the flow data for one day for site "01646500".
 Site "01646500" is located on the Potomac River near Washington D.C. at the
@@ -77,7 +81,7 @@ get additional information about this parameter code, such as the units
 discharge is measured in, by using the `readNWISpCode` function.
 
 ```@example 01646500
-pcodedf, response = readNWISpCode("00060")
+pcodedf, response = readNWISpCode("00060");
 pcodedf
 ```
 
@@ -89,7 +93,7 @@ we plot the discharge data, we can properly label the y-axis.
 using Dates
 timestamps = Dates.DateTime.(df.datetime, "yyy-mm-dd HH:MM");
 # convert the discharge values to a float type
-discharge = map(x->parse(Float64,x),df."69928_00060");
+discharge = map(x->parse(Float64,x), df."69928_00060");
 # make the plot
 using Plots
 plot(timestamps, discharge,
@@ -99,4 +103,22 @@ plot(timestamps, discharge,
      xrotation=60,
      label="Discharge",
      dpi=200)
+```
+
+## WQP Examples
+These examples use data retrieved from the
+[Water Quality Portal](https://waterqualitydata.us/).
+
+### Identifying Water Quality Sites with Chloride Measurements
+
+In this example we will identify sites that have chloride measurements
+in the state of New Jersey, which is represented by the state code "US:34".
+To do this we query the Water Quality Portal using the `whatWQPsites` function.
+
+```@example NJchloride
+using DataRetrieval
+njcl, response = whatWQPsites(statecode="US:34",
+                              characteristicName="Chloride");
+# print the size of the data frame (rows x columns)
+size(njcl)
 ```
