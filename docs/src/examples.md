@@ -93,7 +93,7 @@ we plot the discharge data, we can properly label the y-axis.
 using Dates
 timestamps = Dates.DateTime.(df.datetime, "yyy-mm-dd HH:MM");
 # convert the discharge values to a float type
-discharge = map(x->parse(Float64,x),df."69928_00060");
+discharge = map(x->parse(Float64,x), df."69928_00060");
 # make the plot
 using Plots
 plot(timestamps, discharge,
@@ -104,6 +104,10 @@ plot(timestamps, discharge,
      label="Discharge",
      dpi=200)
 ```
+
+## WQP Examples
+These examples use data retrieved from the
+[Water Quality Portal](https://waterqualitydata.us/).
 
 ### Identifying Water Quality Sites with Chloride Measurements
 
@@ -118,7 +122,3 @@ njcl, response = whatWQPsites(statecode="US:34",
 # print the size of the data frame (rows x columns)
 size(njcl)
 ```
-
-## WQP Examples
-These examples use data retrieved from the
-[Water Quality Portal](https://waterqualitydata.us/).
