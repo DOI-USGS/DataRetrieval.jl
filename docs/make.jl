@@ -8,6 +8,7 @@ makedocs(
     authors = "J. Hariharan",
     pages = ["index.md", "examples.md", "apiref.md"],
     format = Documenter.HTML(
-        prettyurls = get(ENV, "CI", nothing) == "true"
+        prettyurls = get(ENV, "CI", nothing) == "true",
+        edit_link = nothing
     )
 )
