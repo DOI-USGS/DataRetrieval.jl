@@ -6,7 +6,11 @@
 Pages = ["examples.md"]
 ```
 
-## Examining Site 01491000
+## NWIS Examples
+These examples use data retrieved from the
+[National Water Information System(NWIS)](https://waterdata.usgs.gov/nwis).
+
+### Examining Site 01491000
 
 In this example we fetch some data for site "01491000" located on the
 Choptank River near Greensboro, MD.
@@ -55,7 +59,7 @@ API host.
 response.request
 ```
 
-## Plotting One Day's Flow Data for Site 01646500
+### Plotting One Day's Flow Data for Site 01646500
 
 In this example we will plot the flow data for one day for site "01646500".
 Site "01646500" is located on the Potomac River near Washington D.C. at the
@@ -101,7 +105,7 @@ plot(timestamps, discharge,
      dpi=200)
 ```
 
-## Identifying Water Quality Sites with Chloride Measurements
+### Identifying Water Quality Sites with Chloride Measurements
 
 In this example we will identify sites that have chloride measurements
 in the state of New Jersey, which is represented by the state code "US:34".
@@ -114,3 +118,7 @@ njcl, response = whatWQPsites(statecode="US:34",
 # print the size of the data frame (rows x columns)
 size(njcl)
 ```
+
+## WQP Examples
+These examples use data retrieved from the
+[Water Quality Portal](https://waterqualitydata.us/).

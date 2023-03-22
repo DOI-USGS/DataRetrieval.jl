@@ -11,6 +11,8 @@ package currently takes place on GitLab, in the
 
 ## Installation
 
+### User Installation
+
 Currently only the development version of DataRetrieval.jl is available. To
 install the development version, you can use the Julia package manager and
 point to the git repository:
@@ -18,6 +20,8 @@ point to the git repository:
 ```julia
 ] add https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git
 ```
+
+### Developer Installation
 
 When developing in Julia, we recommend using the
 [Revise](https://timholy.github.io/Revise.jl/stable/) package so that you do
