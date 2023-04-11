@@ -22,15 +22,15 @@ jobs:
         arch: x64
     - name: Make Docs
       run: |
-        julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.build(); Pkg.test()'
+        julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.build();'
         julia --project=. -e 'using Pkg; Pkg.add("Documenter"); using Documenter; include("docs/make.jl")'
     - name: Debug
       run: |
         echo $REF
         echo $EVENT_NAME
         echo ${{ github.event_name == 'push' }}
-        echo ${{ github.ref == 'refs/heads/master' }}
-        echo ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        echo ${{ github.ref == 'refs/heads/main' }}
+        echo ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
