@@ -1,0 +1,29 @@
+name: Documentation
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Julia
+      uses: julia-actions/setup-julia@v1
+      with:
+        version: '1.8'
+        arch: x64
+    - name: Make Docs
+      run: |
+        julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.build(); Pkg.test()'
+        julia --project=. -e 'using Pkg; Pkg.add("Documenter"); using Documenter; include("docs/make.jl")'
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4.4.1
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
