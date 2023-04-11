@@ -27,3 +27,8 @@ jobs:
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      with:
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          BRANCH: gh-pages
+          FOLDER: docs/build/html
