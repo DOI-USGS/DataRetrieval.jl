@@ -105,6 +105,53 @@ plot(timestamps, discharge,
      dpi=200)
 ```
 
+### Fetching and Plotting Groundwater Levels from Site 393617075380403
+
+In this example we will fetch and plot daily groundwater levels from site
+"393617075380403". This site is located in the state of Delaware.
+
+First we will fetch the groundwater levels (parameter code "72019")
+for the first six months of 2012 using the `readNWISdv` function.
+
+```@example 393617075380403
+using DataRetrieval
+siteNumber = "393617075380403"
+df, response = readNWISdv(siteNumber, "72019",
+                          startDate="2012-01-01", endDate="2012-06-30");
+# display the first row of the data frame
+first(df)
+```
+
+We can get additional information about this parameter code, such as the
+units groundwater levels are measured in, by using the `readNWISpCode`
+function.
+
+```@example 393617075380403
+pcodedf, response = readNWISpCode("72019");
+pcodedf
+```
+
+We can see that the units for groundwater levels are feet below land surface.
+Now when we plot the groundwater levels, we can properly label the y-axis.
+
+```@example 393617075380403
+# convert the date time column to a DateTime type
+using Dates
+timestamps = Dates.DateTime.(df.datetime, "yyy-mm-dd HH:MM");
+# convert the groundwater level values to a float type
+gwlevels = map(x->parse(Float64,x), df."276495_72019_00003");
+# make the plot
+using Plots
+plot(timestamps, gwlevels,
+     title="Groundwater Levels at Site 393617075380403",
+     ylabel="Groundwater Level,\nfeet below land surface",
+     xlabel="Timestamp",
+     xrotation=60,
+     label="Groundwater Level",
+     dpi=200,
+     margin=5Plots.mm)
+```
+
 ## WQP Examples
 These examples use data retrieved from the
 [Water Quality Portal](https://waterqualitydata.us/).
