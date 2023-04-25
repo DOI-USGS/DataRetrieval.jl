@@ -5,7 +5,6 @@ using JSON
 using DataFrames
 using CSV
 using EzXML
-using Plots
 
 # Include URL construction functions:
 include("ConstructURLs.jl")
