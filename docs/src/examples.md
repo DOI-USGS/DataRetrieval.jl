@@ -139,7 +139,7 @@ Now when we plot the groundwater levels, we can properly label the y-axis.
 using Dates
 timestamps = Dates.DateTime.(df.datetime, "yyy-mm-dd HH:MM");
 # convert the groundwater level values to a float type
-gwlevels = map(x->parse(Float64,x), df."276495_72019_00003");
+gwlevels = parse.(Float64, df."276495_72019_00003");
 # make the plot
 using Plots
 plot(timestamps, gwlevels,
