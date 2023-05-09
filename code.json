@@ -55,14 +55,14 @@
       "licenses": [
         {
           "name": "Public Domain, CC0-1.0",
-          "URL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/main/LICENSE.md"
+          "URL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/0.1.0/LICENSE.md"
         }
       ]
     },
 
     "homepageURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl",
-    "downloadURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/archive/main/DataRetrieval.jl-main.zip",
-    "disclaimerURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/main/DISCLAIMER.md",
+    "downloadURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/archive/0.1.0/DataRetrieval.jl-0.1.0.zip",
+    "disclaimerURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/0.1.0/DISCLAIMER.md",
     "repositoryURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git",
     "vcs": "git",
 
