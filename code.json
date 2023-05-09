@@ -42,5 +42,49 @@
     "date": {
       "metadataLastUpdated": "2023-01-03"
     }
+  },
+  {
+    "name": "DataRetrieval.jl",
+    "organization": "U.S. Geological Survey",
+    "description": "Julia version of dataRetrieval",
+    "version": "0.1.0",
+    "status": "Release Candidate",
+
+    "permissions": {
+      "usageType": "openSource",
+      "licenses": [
+        {
+          "name": "Public Domain, CC0-1.0",
+          "URL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/main/LICENSE.md"
+        }
+      ]
+    },
+
+    "homepageURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl",
+    "downloadURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/archive/main/DataRetrieval.jl-main.zip",
+    "disclaimerURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/main/DISCLAIMER.md",
+    "repositoryURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git",
+    "vcs": "git",
+
+    "laborHours": 1,
+
+    "tags": [
+      "Julia",
+      "USGS",
+      "water"
+    ],
+
+    "languages": [
+      "Julia"
+    ],
+
+    "contact": {
+      "name": "Jayaram Hariharan",
+      "email": "jhariharan@usgs.gov"
+    },
+
+    "date": {
+      "metadataLastUpdated": "2023-05-09"
+    }
   }
 ]
