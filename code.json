@@ -3,8 +3,8 @@
     "name": "DataRetrieval.jl",
     "organization": "U.S. Geological Survey",
     "description": "Julia version of dataRetrieval",
-    "version": "main",
-    "status": "Development",
+    "version": "0.1.0",
+    "status": "Release Candidate",
 
     "permissions": {
       "usageType": "openSource",
@@ -40,7 +40,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2023-01-03"
+      "metadataLastUpdated": "2023-05-09"
     }
   }
 ]
