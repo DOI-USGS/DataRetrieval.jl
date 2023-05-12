@@ -89,3 +89,72 @@ See [DISCLAIMER.md](https://code.usgs.gov/water/computational-tools/DataRetrieva
 
 For questions or comments about the package, please contact
 [J. Hariharan](mailto:jhariharan@usgs.gov)
+
+## Citing `DataRetrieval.jl`
+
+When citing `DataRetrieval.jl` please use:
+
+Hariharan, J.A., 2023, DataRetrieval.jl-Julia package for obtaining USGS water data directly from web services: U.S. Geological Survey software
+release, Julia package, Reston, Va., <https://doi.org/10.5066/P95XLHUH>.
+
+## Additional Publication Details
+
+Additional metadata about this publication, not found in other parts of
+the page is in this table.
+
+<!--html_preserve-->
+<table>
+<tbody>
+<tr>
+<th scope="row">
+Publication type
+</th>
+<td>
+Julia language package
+</td>
+</tr>
+<tr>
+<th scope="row">
+DOI
+</th>
+<td>
+10.5066/P95XLHUH
+</td>
+</tr>
+<tr>
+<th scope="row">
+Year published
+</th>
+<td>
+2023
+</td>
+</tr>
+<tr>
+<th scope="row">
+Year of version
+</th>
+<td>
+2023
+</td>
+</tr>
+<tr>
+<th scope="row">
+Version
+</th>
+<td>
+0.1.0
+</td>
+</tr>
+<tr>
+<th scope="row">
+IPDS
+</th>
+<td>
+IP-152366
+</td>
+</tr>
+</tbody>
+</table>
+
+<cr><!--/html_preserve-->
+
