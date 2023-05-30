@@ -26,7 +26,7 @@ HTTP.Messages.Response
 ```
 """
 function readNWISdv(siteNumbers, parameterCd;
-                    startDate="", endDate="", statCd="00003")
+                    startDate="", endDate="", statCd="00003", format="rdb")
     # construct the query URL
     url = constructNWISURL(
         siteNumbers,
@@ -35,7 +35,7 @@ function readNWISdv(siteNumbers, parameterCd;
         endDate = endDate,
         service = "dv",
         statCd = statCd,
-        format = "rdb",
+        format = format,
         expanded = true,
         ratingType = "base",
         statReportType = "daily",
@@ -95,7 +95,7 @@ end
 Function to obtain water quality data from the NWIS web service.
 """
 function readNWISqw(siteNumbers;
-                    startDate="", endDate="", expanded=true)
+                    startDate="", endDate="", format="rdb", expanded=true)
     # throw error as functionality doesn't work yet...
     throw(FunctionNotDefinedException(
         "qwdata service querying functionality has not been developed yet."))
@@ -107,7 +107,7 @@ function readNWISqw(siteNumbers;
         endDate = endDate,
         service = "qw",
         statCd = "",
-        format = "rdb",
+        format = format,
         expanded = expanded,
         ratingType = "",
         statReportType = "",
@@ -125,9 +125,10 @@ end
 Alias to `readNWISqw()`.
 """
 function readNWISqwdata(siteNumbers;
-                        startDate="", endDate="", expanded=true)
+                        startDate="", endDate="", format="rdb", expanded=true)
     return readNWISqw(siteNumbers;
-                      startDate=startDate, endDate=endDate, expanded=expanded)
+                      startDate=startDate, endDate=endDate, format=format,
+                      expanded=expanded)
 end
 
 """
@@ -195,7 +196,7 @@ HTTP.Messages.Response
 ```
 """
 function readNWISunit(siteNumbers, parameterCd;
-                      startDate="", endDate="")
+                      startDate="", endDate="", format="rdb")
     # construct the query URL
     url = constructNWISURL(
         siteNumbers,
@@ -204,7 +205,7 @@ function readNWISunit(siteNumbers, parameterCd;
         endDate = endDate,
         service = "uv",
         statCd = "",
-        format = "rdb",
+        format = format,
         expanded = true,
         ratingType = "",
         statReportType = "",
@@ -221,9 +222,9 @@ end
 Alias for `readNWISunit()`.
 """
 function readNWISuv(siteNumbers, parameterCd;
-                    startDate="", endDate="")
+                    startDate="", endDate="", format="rdb")
     return readNWISunit(siteNumbers, parameterCd;
-                        startDate=startDate, endDate=endDate)
+                        startDate=startDate, endDate=endDate, format=format)
 end
 
 """
@@ -232,9 +233,9 @@ end
 Alias for `readNWISunit()`.
 """
 function readNWISiv(siteNumbers, parameterCd;
-                    startDate="", endDate="")
+                    startDate="", endDate="", format="rdb")
     return readNWISunit(siteNumbers, parameterCd;
-                        startDate=startDate, endDate=endDate)
+                        startDate=startDate, endDate=endDate, format=format)
 end
 
 """
@@ -249,6 +250,8 @@ function readNWIS(obs_url)
     # then, depending on the URL, do different things
     if occursin("rdb", obs_url) == true
         df = _readRDB(response)
+    elseif occursin("json", obs_url) == true
+        df = _readJSON(response)
     elseif occursin("waterml", obs_url) == true
         df = _readWaterML(response)
     else
@@ -302,4 +305,54 @@ function _readWaterML(response)
     # parse xml content
     data = parsexml(body)
     # need to write intelligent code to parse the xml content into a data frame
+end
+
+"""
+    _readJSON(response)
+
+Private function to parse the response body buffer object from a JSON query.
+"""
+function _readJSON(response)
+    # read JSON
+    dict = JSON.parse(String(response.body))
+
+    # get and munge the data into a data frame
+    merged_df = DataFrame()
+
+    for timeseries in dict["value"]["timeSeries"]
+        site_no = timeseries["sourceInfo"]["siteCode"][1]["value"]
+        param_cd = timeseries["variable"]["variableCode"][1]["value"]
+        option = get(timeseries["variable"]["options"], "option", [Dict("value" => "")])[1]["value"]
+
+        for parameter in timeseries["values"]
+            col_name = param_cd
+            method = get(parameter["method"], 1, Dict("methodDescription" => ""))["methodDescription"]
+
+            record_json = parameter["value"]
+
+            if record_json == ""
+                continue
+            end
+
+            record_df = DataFrame(record_json)
+
+            # assign the site number
+            record_df.site_no .= site_no
+
+            # adjust qualifiers to be the string
+            record_df.qualifiers .= [join(x, ",") for x in record_df.qualifiers]
+
+            # convert the values to floats
+            record_df.value .= [parse(Float64, x) for x in record_df.value]
+
+            # rename the columns
+            rename!(record_df, :value => col_name)
+            rename!(record_df, :dateTime => :datetime)
+
+            merged_df = vcat(merged_df, record_df)
+        end
+    end
+
+    # return the data frame
+    return merged_df
 end
