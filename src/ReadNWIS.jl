@@ -5,7 +5,7 @@ end
 
 """
     readNWISdv(siteNumbers, parameterCd;
-               startDate="", endDate="", statCd="00003")
+               startDate="", endDate="", statCd="00003", format="rdb")
 
 Function to obtain daily value data from the NWIS web service.
 
@@ -90,7 +90,7 @@ end
 
 """
     readNWISqw(siteNumbers;
-               startDate="", endDate="", expanded=true)
+               startDate="", endDate="", format="rdb", expanded=true)
 
 Function to obtain water quality data from the NWIS web service.
 """
@@ -120,7 +120,7 @@ end
 
 """
     readNWISqwdata(siteNumbers;
-                   startDate="", endDate="", expanded=true)
+                   startDate="", endDate="", format="rdb", expanded=true)
 
 Alias to `readNWISqw()`.
 """
@@ -173,7 +173,8 @@ function readNWISsite(siteNumbers)
 end
 
 """
-    readNWISunit(siteNumbers, parameterCd; startDate="", endDate="")
+    readNWISunit(siteNumbers, parameterCd;
+                 startDate="", endDate="", format="rdb")
 
 Function to obtain instantaneous value data from the NWIS web service.
 
@@ -217,7 +218,8 @@ function readNWISunit(siteNumbers, parameterCd;
 end
 
 """
-    readNWISuv(siteNumbers, parameterCd; startDate="", endDate="")
+    readNWISuv(siteNumbers, parameterCd;
+               startDate="", endDate="", format="rdb")
 
 Alias for `readNWISunit()`.
 """
@@ -228,7 +230,8 @@ function readNWISuv(siteNumbers, parameterCd;
 end
 
 """
-    readNWISiv(siteNumbers, parameterCd; startDate="", endDate="")
+    readNWISiv(siteNumbers, parameterCd;
+               startDate="", endDate="", format="rdb")
 
 Alias for `readNWISunit()`.
 """
@@ -322,12 +325,9 @@ function _readJSON(response)
     for timeseries in dict["value"]["timeSeries"]
         site_no = timeseries["sourceInfo"]["siteCode"][1]["value"]
         param_cd = timeseries["variable"]["variableCode"][1]["value"]
-        option = get(timeseries["variable"]["options"], "option", [Dict("value" => "")])[1]["value"]
 
         for parameter in timeseries["values"]
             col_name = param_cd
-            method = get(parameter["method"], 1, Dict("methodDescription" => ""))["methodDescription"]
-
             record_json = parameter["value"]
 
             if record_json == ""
