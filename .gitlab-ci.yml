@@ -20,9 +20,11 @@ build:
     expire_in: 1 week
 
 deploy-dev:
-  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:4.5.3
+  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:4.4.2
   stage: deploy
   script:
+    # install system dependencies
+    - apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
     # install packages
     - Rscript -e "install.packages(c('rsconnect', 'connectapi'))"
     # create manifest file for deployment
@@ -33,9 +35,11 @@ deploy-dev:
     - if: '$CI_COMMIT_BRANCH == "dev" && $CONNECT_API_KEY != null && $CONNECT_SERVER != null'
 
 deploy-main:
-  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:4.5.3
+  image: artifactory.wma.chs.usgs.gov/docker-official-mirror/rocker/rstudio:4.4.2
   stage: deploy
   script:
+    # install system dependencies
+    - apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
     # install packages
     - Rscript -e "install.packages(c('rsconnect', 'connectapi'))"
     # create manifest file for deployment
