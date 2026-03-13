@@ -31,7 +31,7 @@ Flexible querying of the WQP. See other functions for specific queries.
   for available characteristic names).
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = readWQPdata("Result",
                                   lat="44.2", long="-88.9", within="0.5");
 
@@ -46,8 +46,8 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function readWQPdata(service; kwargs...)
-    df, response = _genericWQPcall(service, Dict(kwargs...))
+function readWQPdata(service; legacy=true, ssl_check=true, kwargs...)
+    df, response = _genericWQPcall(service, Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -58,7 +58,7 @@ end
 Query the WQP for results.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = readWQPresults(lat="44.2", long="-88.9", within="0.5");
 
 julia> first(df)[1:3]
@@ -72,8 +72,8 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function readWQPresults(; kwargs...)
-    df, response = _genericWQPcall("Result", Dict(kwargs...))
+function readWQPresults(; legacy=true, ssl_check=true, kwargs...)
+    df, response = _genericWQPcall("Result", Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -84,7 +84,7 @@ end
 Function to search WQP for sites within a region with specific data.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = whatWQPsites(lat="44.2", long="-88.9", within="2.5");
 
 julia> first(df)[1:3]
@@ -98,8 +98,8 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function whatWQPsites(; kwargs...)
-    df, response = _genericWQPcall("Station", Dict(kwargs...))
+function whatWQPsites(; legacy=true, ssl_check=true, kwargs...)
+    df, response = _genericWQPcall("Station", Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -110,7 +110,7 @@ end
 Function to search WQP for organizations within a region with specific data.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = whatWQPorganizations(huc="12");
 
 julia> first(df)[1:3]
@@ -124,8 +124,8 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function whatWQPorganizations(; kwargs...)
-    df, response = _genericWQPcall("Organization", Dict(kwargs...))
+function whatWQPorganizations(; legacy=true, ssl_check=true, kwargs...)
+    df, response = _genericWQPcall("Organization", Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -136,7 +136,7 @@ end
 Function to search WQP for projects within a region with specific data.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = whatWQPprojects(huc="19");
 
 julia> first(df)[1:3]
@@ -150,8 +150,8 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function whatWQPprojects(; kwargs...)
-    df, response = _genericWQPcall("Project", Dict(kwargs...))
+function whatWQPprojects(; legacy=true, ssl_check=true, kwargs...)
+    df, response = _genericWQPcall("Project", Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -162,7 +162,7 @@ end
 Function to search WQP for activities within a region with specific data.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = whatWQPactivities(statecode="US:11",
                                         startDateLo="12-30-2019",
                                         startDateHi="01-01-2020");
@@ -178,8 +178,8 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function whatWQPactivities(; kwargs...)
-    df, response = _genericWQPcall("Activity", Dict(kwargs...))
+function whatWQPactivities(; legacy=true, ssl_check=true, kwargs...)
+    df, response = _genericWQPcall("Activity", Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -190,7 +190,7 @@ end
 Function to search WQP for detection limits within a region with specific data.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = whatWQPdetectionLimits(statecode="US:44",
                                              characteristicName="Nitrite",
                                              startDateLo="01-01-2021",
@@ -207,9 +207,9 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function whatWQPdetectionLimits(; kwargs...)
+function whatWQPdetectionLimits(; legacy=true, ssl_check=true, kwargs...)
     df, response = _genericWQPcall("ResultDetectionQuantitationLimit",
-                                   Dict(kwargs...))
+                                   Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -220,7 +220,7 @@ end
 Function to search WQP for habitat metrics within a region with specific data.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = whatWQPhabitatMetrics(statecode="US:44");
 
 julia> first(df)[1:3]
@@ -234,8 +234,8 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function whatWQPhabitatMetrics(; kwargs...)
-    df, response = _genericWQPcall("BiologicalMetric", Dict(kwargs...))
+function whatWQPhabitatMetrics(; legacy=true, ssl_check=true, kwargs...)
+    df, response = _genericWQPcall("BiologicalMetric", Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -246,7 +246,7 @@ end
 Function to search WQP for project weights within a region with specific data.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = whatWQPprojectWeights(statecode="US:38",
                                             startDateLo="01-01-2006",
                                             startDateHi="01-01-2008");
@@ -262,9 +262,9 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function whatWQPprojectWeights(; kwargs...)
+function whatWQPprojectWeights(; legacy=true, ssl_check=true, kwargs...)
     df, response = _genericWQPcall("ProjectMonitoringLocationWeighting",
-                                   Dict(kwargs...))
+                                   Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -275,7 +275,7 @@ end
 Function to search WQP for activity metrics within a region with specific data.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = whatWQPactivityMetrics(statecode="US:38",
                                              startDateLo="07-01-2006",
                                              startDateHi="12-01-2006");
@@ -291,8 +291,8 @@ julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
 """
-function whatWQPactivityMetrics(; kwargs...)
-    df, response = _genericWQPcall("ActivityMetric", Dict(kwargs...))
+function whatWQPactivityMetrics(; legacy=true, ssl_check=true, kwargs...)
+    df, response = _genericWQPcall("ActivityMetric", Dict(kwargs...); legacy=legacy, ssl_check=ssl_check)
     # return the data frame
     return df, response
 end
@@ -302,13 +302,32 @@ end
 
 Private function to be called by the other wrapper WQP functions.
 """
-function _genericWQPcall(service, query_params)
+function _genericWQPcall(service, query_params; legacy=true, ssl_check=true)
+    normalized_query = Dict{String, Any}()
+    for (k, v) in query_params
+        normalized_query[String(k)] = v
+    end
+
+    if haskey(normalized_query, "mimeType")
+        mime = lowercase(String(normalized_query["mimeType"]))
+        if mime == "geojson"
+            throw(ArgumentError("GeoJSON is not yet supported. Set mimeType=csv."))
+        elseif mime != "csv"
+            throw(ArgumentError("Invalid mimeType. Set mimeType=csv."))
+        end
+    end
+    normalized_query["mimeType"] = "csv"
+
     # construct the base query URL
-    url = constructWQPURL(service)
+    url = constructWQPURL(service; legacy=legacy)
     # do the GET request
-    response = _custom_get(url, query_params=query_params)
+    response = _custom_get(url, query_params=normalized_query, ssl_check=ssl_check)
     # parse the Response
-    df = DataFrame(CSV.File(response.body))
+    content_type = HTTP.header(response, "Content-Type", "")
+    if occursin("text/html", content_type)
+        throw(ArgumentError("Received an HTML response instead of CSV data from WQP. This typically indicates an error page or a service issue."))
+    end
+    df = DataFrame(CSV.File(response.body; comment="#", ignoreemptyrows=true))
     # return the data frame
     return df, response
 end

@@ -26,5 +26,4 @@ pull request on GitHub.
 Doing this correctly **will** preserve the authorship of the changes and
 commits, and will also close the GitHub pull request and any associated issues.
 
-![mirror-workflow](../imgs/mirror-workflow.png)
 ![mirror-workflow](docs/src/imgs/mirror-workflow.png)
