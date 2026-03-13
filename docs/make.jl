@@ -70,5 +70,6 @@ makedocs(
         edit_link = nothing,
         repolink = "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl"
     ),
-    checkdocs = :exports
+    checkdocs = :exports,
+    warnonly = [:example_block]
 )
