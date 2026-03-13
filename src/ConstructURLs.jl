@@ -134,6 +134,7 @@ function _getbaseURL(service)
         ("qwdata", "https://nwis.waterdata.usgs.gov/nwis/qwdata"),
         ("stat", "https://waterservices.usgs.gov/nwis/stat/"),
         ("useNat", "https://waterdata.usgs.gov/nwis/water_use"),
+        # NOTE: pCode services are decommissioned and currently redirect to HTML help pages.
         ("pCode", "https://help.waterdata.usgs.gov/code/parameter_cd_query"),
         ("pCodeSingle", "https://help.waterdata.usgs.gov/code/parameter_cd_nm_query"),
         ("Result", "https://www.waterqualitydata.us/data/Result/search"),
@@ -252,15 +253,57 @@ function _qwdata_url(url, site_txt, multiple_parameters)
 end
 
 """
-    constructWQPURL(service)
+    constructWQPURL(service; legacy=true)
 
 Function to construct the URL for the WQP service.
 """
-function constructWQPURL(service)
-    # get base URL
-    url = _getbaseURL(service)
-    # add ?
-    url = string(url, "?")
-    # return this URL
-    return(url)
+function constructWQPURL(service; legacy=true)
+    service = String(service)
+
+    legacy_services = Set([
+        "Activity",
+        "ActivityMetric",
+        "BiologicalMetric",
+        "Organization",
+        "Project",
+        "ProjectMonitoringLocationWeighting",
+        "Result",
+        "ResultDetectionQuantitationLimit",
+        "Station",
+    ])
+    wqx3_services = Set(["Activity", "Result", "Station"])
+
+    if legacy == true
+        _warn_wqp_legacy_once()
+        if (service in legacy_services) == false
+            throw(ArgumentError(
+                "Legacy WQP service not recognized: $service. Valid options are $(collect(legacy_services))."
+            ))
+        end
+        return string("https://www.waterqualitydata.us/data/", service, "/search?")
+    end
+
+    _warn_wqp_wqx3_once()
+    if (service in wqx3_services) == false
+        @warn "WQX3.0 profile is not available for service '$service'; using legacy endpoint."
+        return constructWQPURL(service; legacy=true)
+    end
+    return string("https://www.waterqualitydata.us/wqx3/", service, "/search?")
+end
+
+const _WQP_LEGACY_WARNING_SHOWN = Ref(false)
+const _WQP_WQX3_WARNING_SHOWN = Ref(false)
+
+function _warn_wqp_legacy_once()
+    if _WQP_LEGACY_WARNING_SHOWN[] == false
+        @warn "WQP legacy format is deprecated and USGS legacy data may be stale. Prefer WQX3.0 where available by using legacy=false."
+        _WQP_LEGACY_WARNING_SHOWN[] = true
+    end
+end
+
+function _warn_wqp_wqx3_once()
+    if _WQP_WQX3_WARNING_SHOWN[] == false
+        @warn "WQX3.0 support is experimental and queries may be slow or intermittent."
+        _WQP_WQX3_WARNING_SHOWN[] = true
+    end
 end

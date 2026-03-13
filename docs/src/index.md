@@ -9,6 +9,43 @@ versions of data retrieval are available:
 package currently takes place on GitLab, in the
 [DataRetrieval.jl repository](https://code.usgs.gov/water/computational-tools/DataRetrieval.jl).
 
+The Julia package includes support for NWIS, WQP, and WaterData samples-data
+queries.
+
+USGS data access is transitioning from legacy NWIS web services to modern
+Water Data APIs. In general, prefer `readWaterData*` functions for new
+workflows when equivalent Julia functionality is available.
+
+For broader upstream migration and status context from the R package, see:
+
+- <https://doi-usgs.github.io/dataRetrieval/articles/read_waterdata_functions.html>
+- <https://doi-usgs.github.io/dataRetrieval/articles/Status.html>
+
+### What would you like to do?
+
+Use this quick guide to select the right DataRetrieval.jl function family:
+
+1. Instantaneous USGS data: `readWaterDataContinuous` /
+	`readWaterDataLatestContinuous`
+2. Daily USGS data: `readWaterDataDaily` / `readWaterDataLatestDaily`
+3. Discrete USGS groundwater field measurements:
+	`readWaterDataFieldMeasurements`
+4. Water Quality Portal data: `readWQPdata` / `readWQPresults`
+5. USGS discrete samples-data: `readWaterDataSamples`
+6. USGS time-series metadata: `readWaterDataTimeSeriesMetadata`
+7. NLDI discovery and hydrography: `searchNLDI`, `readNLDIfeatures`,
+	`readNLDIflowlines`, `readNLDIbasin`
+8. Daily statistics: `readWaterDataStatsPOR`, `readWaterDataStatsDateRange`
+
+USGS WaterData APIs may apply stricter rate limits to unauthenticated requests.
+For higher rate limits, register for an API key at
+[https://api.waterdata.usgs.gov/signup/](https://api.waterdata.usgs.gov/signup/)
+and set `ENV["API_USGS_PAT"]` before making requests. You can also set a
+session-only override with `setUSGSAPIToken!("...")`.
+
+NWIS legacy endpoints are being decommissioned. For water-quality samples,
+prefer `readWaterDataSamples` over NWIS `qw/qwdata` workflows.
+
 ## Installation
 
 ### User Installation

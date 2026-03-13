@@ -1,5 +1,10 @@
 # Examples
 
+Legacy NWIS examples are still shown below, but for new development you should
+prefer `readWaterData*` functions when equivalent functionality is available.
+See the migration context from upstream R docs:
+<https://doi-usgs.github.io/dataRetrieval/articles/read_waterdata_functions.html>.
+
 ## Index
 
 ```@contents
@@ -80,7 +85,7 @@ We have requested discharge data using the parameter code "00060". We can
 get additional information about this parameter code, such as the units
 discharge is measured in, by using the `readNWISpCode` function.
 
-```@example 01646500
+```julia
 pcodedf, response = readNWISpCode("00060");
 pcodedf
 ```
@@ -88,15 +93,15 @@ pcodedf
 We can see that the units for discharge are cubic feet per second. Now when
 we plot the discharge data, we can properly label the y-axis.
 
-```@example 01646500
+```julia
 # convert the date time column to a DateTime type
 using Dates
-timestamps = Dates.DateTime.(df.datetime, "yyy-mm-dd HH:MM");
-# convert the discharge values to a float type
-discharge = map(x->parse(Float64,x), df."69928_00060");
+# timestamps are already Date objects thanks to improved RDB parsing
+# discharge values are already numeric
+discharge = df."69928_00060";
 # make the plot
 using Plots
-plot(timestamps, discharge,
+plot(df.datetime, discharge,
      title="Discharge at Little Falls Pump Station, Dec. 1, 2022",
      ylabel="Discharge (ft³/s)",
      xlabel="Timestamp",
@@ -126,7 +131,7 @@ We can get additional information about this parameter code, such as the
 units groundwater levels are measured in, by using the `readNWISpCode`
 function.
 
-```@example 393617075380403
+```julia
 pcodedf, response = readNWISpCode("72019");
 pcodedf
 ```
@@ -134,15 +139,15 @@ pcodedf
 We can see that the units for groundwater levels are feet below land surface.
 Now when we plot the groundwater levels, we can properly label the y-axis.
 
-```@example 393617075380403
+```julia
 # convert the date time column to a DateTime type
 using Dates
-timestamps = Dates.DateTime.(df.datetime, "yyy-mm-dd HH:MM");
-# convert the groundwater level values to a float type
-gwlevels = parse.(Float64, df."276495_72019_00003");
+# timestamps are already Date objects
+# groundwater level values are already numeric thanks to improved RDB parsing
+gwlevels = df."276495_72019_00003";
 # make the plot
 using Plots
-plot(timestamps, gwlevels,
+plot(df.datetime, gwlevels,
      title="Groundwater Levels at Site 393617075380403",
      ylabel="Groundwater Level,\nfeet below land surface",
      xlabel="Timestamp",

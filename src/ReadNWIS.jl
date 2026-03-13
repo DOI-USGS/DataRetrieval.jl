@@ -3,6 +3,15 @@ struct FunctionNotDefinedException <: Exception
     var::String
 end
 
+const _NWIS_WARNING_SHOWN = Ref(false)
+
+function _warn_nwis_decommission_once()
+    if _NWIS_WARNING_SHOWN[] == false
+        @warn "The NWIS services are deprecated and being decommissioned. Please use WaterData APIs for new workflows."
+        _NWIS_WARNING_SHOWN[] = true
+    end
+end
+
 """
     readNWISdv(siteNumbers, parameterCd;
                startDate="", endDate="", statCd="00003", format="rdb")
@@ -10,17 +19,16 @@ end
 Function to obtain daily value data from the NWIS web service.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = readNWISdv("01646500", "00060",
                                  startDate="2010-10-01", endDate="2010-10-01");
 
 julia> df  # df contains the formatted data as a DataFrame
 1×5 DataFrame
- Row │ agency_cd  site_no   datetime    68478_00060_00003  68478_00060_00003_c ⋯
-     │ String7    String15  String15    String7            String3             ⋯
+ Row │ agency_cd  site_no   datetime    68478_00060_00003  68478_00060_00003_cd
+     │ String     String    Date        Int64              String1
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ USGS       01646500  2010-10-01  13100              A                   ⋯
-                                                                1 column omitted
+   1 │ USGS       01646500  2010-10-01              13100  A
 julia> typeof(response)  # response is the unmodified HTTP GET response object
 HTTP.Messages.Response
 ```
@@ -53,7 +61,7 @@ Function to obtain parameter code information from the NWIS web service.
 As currently implemented, support for multiple parameter codes is not included.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = readNWISpCode("00060");
 
 julia> df  # df contains the formatted data as a DataFrame
@@ -96,9 +104,10 @@ Function to obtain water quality data from the NWIS web service.
 """
 function readNWISqw(siteNumbers;
                     startDate="", endDate="", format="rdb", expanded=true)
-    # throw error as functionality doesn't work yet...
-    throw(FunctionNotDefinedException(
-        "qwdata service querying functionality has not been developed yet."))
+    _warn_nwis_decommission_once()
+    throw(ArgumentError(
+        "`readNWISqw` has been replaced by WaterData samples endpoints. Use `readWaterDataSamples(service=\"results\", ...)` or `readWaterDataResults(...)`."
+    ))
     # construct the query URL
     url = constructNWISURL(
         siteNumbers,
@@ -137,15 +146,15 @@ end
 Function to obtain site information from the NWIS web service.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = readNWISsite("05114000");
 
 julia> df  # df contains the formatted data as a DataFrame
 1×12 DataFrame
- Row │ agency_cd  site_no   station_nm                    site_tp_cd  dec_lat_ ⋯
-     │ String7    String15  String31                      String3     String15 ⋯
+ Row │ agency_cd  site_no   station_nm                      site_tp_cd  dec_lat_ ⋯
+     │ String7    String15  String31                        String3     String15 ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ USGS       05114000  SOURIS RIVER NR SHERWOOD, ND  ST          48.99001 ⋯
+   1 │ USGS       05114000  SOURIS RIVER NEAR SHERWOOD, ND  ST          48.99001 ⋯
                                                                8 columns omitted
 
 julia> typeof(response)  # response is the unmodified HTTP GET response object
@@ -179,7 +188,7 @@ end
 Function to obtain instantaneous value data from the NWIS web service.
 
 # Examples
-```jldoctest
+```julia
 julia> df, response = readNWISunit("01646500", "00060",
                                    startDate="2022-12-29",
                                    endDate="2022-12-29");
@@ -248,6 +257,7 @@ Function to take an NWIS url (typically constructed using the
 `constructNWISURL()` function) and return the associated data.
 """
 function readNWIS(obs_url)
+    _warn_nwis_decommission_once()
     # do the API GET query
     response = _custom_get(obs_url)
     # then, depending on the URL, do different things
@@ -277,17 +287,48 @@ R has additional functionality of being able to specify a timezone when
 data is that granular, could add this too.
 """
 function _readRDB(response)
-    # read the response body into a dataframe
-    df = DataFrame(CSV.File(response.body; comment="#"))
+    # Check for HTML response (redirects or error pages)
+    content_type = HTTP.header(response, "Content-Type", "")
+    if occursin("text/html", content_type)
+        body_str = String(copy(response.body))
+        if occursin("help.waterdata.usgs.gov", body_str) ||
+           occursin("waterdata.usgs.gov/code-dictionary", body_str)
+            throw(ArgumentError("The requested NWIS service has been decommissioned or redirected to a web page. Please check the URL or use a newer API (e.g., WaterData)."))
+        else
+            throw(ArgumentError("Received an HTML response instead of RDB data. This typically indicates an error page or a redirect."))
+        end
+    end
+
+    # read the response body into lines, ignoring comments
+    # We use copy() because String() constructor can be destructive to the underlying vector.
+    content = String(copy(response.body))
+    lines = filter(l -> !startswith(l, "#") && !isempty(l), split(content, "\n"))
+
+    # RDB files standardly have a header line followed by a definition line (e.g. 5s 15s)
+    # If the file is too short, or doesn't look like RDB, we fall back to generic parsing.
+    # Definition lines typically look like 5s, 15s, 12n, etc.
+    if length(lines) >= 2 && occursin(r"^[0-9]+[sdnf](\t[0-9]+[sdnf])*$", lines[2])
+        # RDB files standardly have a definition line after the header that must be skipped.
+        # We force site_no and agency_cd to String to preserve leading zeros.
+        df = DataFrame(CSV.File(response.body; comment="#", header=1, skipto=3, delim='\t',
+                                types=Dict(:site_no => String, :agency_cd => String),
+                                validate=false, ignoreemptyrows=true))
+    else
+        # Fallback for short or non-standard RDB returns.
+        # Force tab delimiter for RDB-like services to avoid guessing errors.
+        df = DataFrame(CSV.File(response.body; comment="#", delim='\t',
+                                types=Dict(:site_no => String, :agency_cd => String),
+                                validate=false, ignoreemptyrows=true))
+    end
     if "datetime" in names(df)
         # filter based on date-time column
-        df = filter(:datetime => x -> length(x) >= 10, df)
+        df = filter(:datetime => x -> (isa(x, AbstractString) ? length(x) >= 10 : true), df)
     elseif "dec_lat_va" in names(df)
         # filter based on some latitude length expectation
-        df = filter(:dec_lat_va => x -> length(x) >= 4, df)
+        df = filter(:dec_lat_va => x -> (isa(x, AbstractString) ? length(x) >= 4 : true), df)
     elseif "parameter_cd" in names(df)
         # filter based on some parameter code length expectation
-        df = filter(:parameter_cd => x -> length(x) >= 4, df)
+        df = filter(:parameter_cd => x -> (isa(x, AbstractString) ? length(x) >= 4 : true), df)
     else
         println("no datetime, latitude, or parameter_cd column found, returning all data")
     end
