@@ -116,7 +116,7 @@ function readWaterData(service; cql=nothing, ssl_check=true, kwargs...)
   output_id = _waterdata_output_id(svc)
   url = string(_WATERDATA_OGC_BASE_URL, "/collections/", svc, "/items")
 
-  query_params, no_paging = _waterdata_prepare_ogc_query(kwargs)
+  query_params, no_paging = _waterdata_prepare_ogc_query(kwargs, svc)
 
   if cql === nothing
     df, response = _waterdata_ogc_get(svc, output_id;
@@ -959,7 +959,7 @@ end
 
 function _waterdata_ogc_get(service::String, output_id::String; ssl_check=true, kwargs...)
   url = string(_WATERDATA_OGC_BASE_URL, "/collections/", service, "/items")
-  query_params, no_paging = _waterdata_prepare_ogc_query(kwargs)
+  query_params, no_paging = _waterdata_prepare_ogc_query(kwargs, service)
   parsed_pages, response = _waterdata_collect_ogc_pages(url, query_params, ssl_check;
                                                         no_paging=no_paging)
 
@@ -995,7 +995,7 @@ function _waterdata_collect_ogc_pages(url::String,
   return pages, response
 end
 
-function _waterdata_prepare_ogc_query(kwargs)
+function _waterdata_prepare_ogc_query(kwargs, service="")
   query_params = Dict{String,String}()
 
   extra_query = nothing
@@ -1012,10 +1012,27 @@ function _waterdata_prepare_ogc_query(kwargs)
     k == :no_paging && continue
     v === nothing && continue
     key = String(k)
+
+    # R parity: the primary output ID of the service (daily_id, time_series_id, etc.) 
+    # maps to the 'id' query parameter. monitoring_location_id remains unchanged 
+    # for data services, but maps to 'id' for the 'monitoring-locations' service
+    # because that is its output_id.
+    output_id = _waterdata_output_id(service)
+    if key == output_id
+      key = "id"
+    end
+
     if key == "bbox" && v isa AbstractVector
       query_params[key] = join(string.(v), ",")
     elseif key == "properties" && v isa AbstractVector
-      query_params[key] = join(string.(v), ",")
+      # R parity: strip 'id' from properties if present, as it is always returned.
+      # Also strip the service-specific output_id if the user provided it.
+      props = filter(p -> lowercase(string(p)) ∉ ["id", lowercase(output_id)], v)
+      if isempty(props)
+        query_params[key] = "id"
+      else
+        query_params[key] = join(string.(props), ",")
+      end
     elseif key == "skip_geometry"
       query_params["skipGeometry"] = lowercase(string(v))
     else

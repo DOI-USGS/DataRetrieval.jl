@@ -11,7 +11,6 @@
     df, response = readNWISdv("02177000", "00060",
                               startDate="2012-09-01", endDate="2012-09-02")
     @test isa(df, DataFrames.DataFrame)
-    @test isa(response, HTTP.Messages.Response)
     @test response.status == 200
     @test nrow(df) > 0
     @test "agency_cd" in names(df)

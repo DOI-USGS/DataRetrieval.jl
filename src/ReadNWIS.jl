@@ -77,6 +77,10 @@ HTTP.Messages.Response
 ```
 """
 function readNWISpCode(parameterCd)
+    _warn_nwis_decommission_once()
+    throw(ArgumentError(
+        "`readNWISpCode` has been decommissioned. Please use `readWaterDataReferenceTable(\"parameter-codes\", query=Dict(\"id\" => \"$parameterCd\"))` for a modern alternative."
+    ))
     # construct the query URL
     url = constructNWISURL(
         "",

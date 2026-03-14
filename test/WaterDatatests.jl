@@ -71,6 +71,35 @@ end
         @test_throws ArgumentError readWaterDataCodes("invalid_service")
         @test_throws ArgumentError readWaterDataReferenceTable("agency-cod")
     end
+
+    @testset "OGC query parameter mapping (parity with R)" begin
+        # monitoring_location_id maps to id consistently
+        params, nopage = DataRetrieval._waterdata_prepare_ogc_query(Dict(:monitoring_location_id => "USGS-05427718"), "monitoring-locations")
+        @test params["id"] == "USGS-05427718"
+        @test !haskey(params, "monitoring_location_number")
+
+        params, nopage = DataRetrieval._waterdata_prepare_ogc_query(Dict(:monitoring_location_id => "05427718"), "monitoring-locations")
+        @test params["id"] == "05427718"
+
+        # monitoring_location_id should NOT map to 'id' for data services (like daily)
+        params, nopage = DataRetrieval._waterdata_prepare_ogc_query(Dict(:monitoring_location_id => "USGS-05427718"), "daily")
+        @test params["monitoring_location_id"] == "USGS-05427718"
+        @test !haskey(params, "id")
+
+        # service-specific ID maps to 'id'
+        params, nopage = DataRetrieval._waterdata_prepare_ogc_query(Dict(:daily_id => "abc"), "daily")
+        @test params["id"] == "abc"
+
+        # properties strip 'id'
+        params, nopage = DataRetrieval._waterdata_prepare_ogc_query(Dict(:properties => ["id", "state_name"]), "monitoring-locations")
+        @test params["properties"] == "state_name"
+
+        params, nopage = DataRetrieval._waterdata_prepare_ogc_query(Dict(:properties => ["monitoring_location_id", "state_name"]), "monitoring-locations")
+        @test params["properties"] == "state_name"
+
+        params, nopage = DataRetrieval._waterdata_prepare_ogc_query(Dict(:properties => ["id"]), "monitoring-locations")
+        @test params["properties"] == "id"
+    end
 end
 
 # ──────────────────────────────────────────────────────────────────────────────
