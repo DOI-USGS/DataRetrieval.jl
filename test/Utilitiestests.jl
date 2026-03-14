@@ -1,4 +1,5 @@
 # Testing utilities functions
+include("TestUtils.jl")
 
 @testset "Utilities Testing" begin
 
@@ -6,20 +7,28 @@
 
     # no query params
     url = "https://www.google.com";
-    response = DataRetrieval._custom_get(url);
-    @test response.status == 200
-    @test isa(response, HTTP.Messages.Response)
-    @test response.request.headers[1][1] == "user-agent"
+    response = _try_live(service_name="Google") do
+        DataRetrieval._custom_get(url)
+    end
+    if response !== nothing
+        @test response.status == 200
+        @test isa(response, HTTP.Messages.Response)
+        @test response.request.headers[1][1] == "user-agent"
+    end
 
     # with query params
     url = constructWQPURL("ActivityMetric");
     query_params = Dict("statecode"=>"US:38",
                         "startDateLo"=>"07-01-2006",
                         "startDateHi"=>"07-01-2007");
-    response_qp = DataRetrieval._custom_get(url, query_params=query_params);
-    @test response_qp.status == 200
-    @test isa(response_qp, HTTP.Messages.Response)
-    @test response_qp.request.headers[1][1] == "user-agent"
+    response_qp = _try_live(service_name="WQP") do
+        DataRetrieval._custom_get(url, query_params=query_params)
+    end
+    if response_qp !== nothing
+        @test response_qp.status == 200
+        @test isa(response_qp, HTTP.Messages.Response)
+        @test response_qp.request.headers[1][1] == "user-agent"
+    end
 
     # API token wiring: ENV fallback and runtime override.
     previous_env = get(ENV, "API_USGS_PAT", nothing)

@@ -5,6 +5,8 @@ using DataFrames
 using Dates
 using JSON
 using CSV
+# Standard tests setup
+include("TestUtils.jl")
 
 @testset "All Tests" begin
     include("NWISURLtests.jl")

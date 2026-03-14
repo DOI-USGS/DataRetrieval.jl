@@ -11,21 +11,7 @@ function _mock_response(fixture_name; content_type="text/plain")
     return response
 end
 
-# Helper: run a live NWIS test, skipping gracefully on connectivity errors.
-function _try_nwis(f)
-    try
-        return f()
-    catch e
-        if e isa HTTP.ExceptionRequest.StatusError && (e.status == 503 || e.status == 504 || e.status == 429)
-            @warn "NWIS service unavailable ($(e.status)). Skipping test."
-            return nothing, nothing
-        elseif e isa HTTP.Exceptions.HTTPError
-            @warn "NWIS connection/timeout error: $e. Skipping test."
-            return nothing, nothing
-        end
-        rethrow(e)
-    end
-end
+include("TestUtils.jl")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Offline parsing tests — deterministic, no network required
@@ -142,7 +128,7 @@ end
 
     @testset "daily values round-trip" begin
         obs_url = "https://waterservices.usgs.gov/nwis/dv/?site=02177000&format=rdb,1.0&ParameterCd=00060&StatCd=00003&startDT=2012-09-01&endDT=2012-10-01"
-        df, response = _try_nwis() do
+        df, response = _try_live(service_name="NWIS") do
             readNWIS(obs_url)
         end
         if df !== nothing

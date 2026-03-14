@@ -1,18 +1,7 @@
 # Testing the WaterData (USGS Samples) API functions
 
-# Helper: run a live WaterData test, skipping gracefully on 429 rate limits.
-# Returns (df, response) on success or (nothing, nothing) on 429.
-function _try_waterdata(f)
-    try
-        return f()
-    catch e
-        if e isa HTTP.Exceptions.StatusError && e.status == 429
-            @warn "WaterData API rate limit (429). Skipping this test."
-            return nothing, nothing
-        end
-        rethrow(e)
-    end
-end
+# Helper: run a live WaterData test, skipping gracefully on connectivity or 429 errors.
+include("TestUtils.jl")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Offline parsing tests — deterministic, no network required
@@ -106,7 +95,7 @@ end
 # Live endpoint tests — each group handles 429 independently
 # ──────────────────────────────────────────────────────────────────────────────
 @testset "WaterData OGC Live" begin
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         getWaterDataOGCParams("daily")
     end
     if df !== nothing
@@ -114,7 +103,7 @@ end
         @test haskey(df, "monitoring_location_id")
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         checkWaterDataOGCRequests(endpoint="daily", request_type="queryables")
     end
     if df !== nothing
@@ -122,7 +111,7 @@ end
         @test isa(df, AbstractDict)
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterData("daily",
             monitoring_location_id="USGS-05427718",
             parameter_code="00060",
@@ -138,7 +127,7 @@ end
 end
 
 @testset "WaterData Codes Live" begin
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataCodes("states")
     end
     if df !== nothing
@@ -146,7 +135,7 @@ end
         @test nrow(df) > 0
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataCodes("characteristicgroup")
     end
     if df !== nothing
@@ -156,7 +145,7 @@ end
 end
 
 @testset "WaterData Samples Live" begin
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataResults(
             profile="narrow",
             monitoringLocationIdentifier="USGS-05288705",
@@ -170,7 +159,7 @@ end
         @test "Activity_ActivityIdentifier" in names(df)
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         whatWaterDataLocations(
             stateFips="US:55",
             usgsPCode="00010",
@@ -184,7 +173,7 @@ end
         @test "Location_Latitude" in names(df)
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         whatWaterDataActivities(
             monitoringLocationIdentifier="USGS-06719505")
     end
@@ -193,7 +182,7 @@ end
         @test nrow(df) > 0
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         whatWaterDataProjects(
             stateFips="US:15",
             activityStartDateLower="2024-10-01",
@@ -205,7 +194,7 @@ end
         @test "Project_Identifier" in names(df)
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         whatWaterDataOrganizations(
             profile="count",
             stateFips="US:01")
@@ -215,7 +204,7 @@ end
         @test nrow(df) >= 1
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataSamples(
             service="locations",
             profile="count",
@@ -229,7 +218,7 @@ end
 end
 
 @testset "WaterData OGC Convenience Live" begin
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataDaily(
             monitoring_location_id="USGS-05427718",
             parameter_code="00060",
@@ -241,7 +230,7 @@ end
         @test "daily_id" ∉ string.(names(df))  # daily_id should be dropped
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataContinuous(
             monitoring_location_id="USGS-06904500",
             parameter_code="00065",
@@ -253,7 +242,7 @@ end
         @test "continuous_id" in string.(names(df))
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         whatWaterDataMonitoringLocations(
             state_name="Connecticut",
             site_type_code="GW",
@@ -264,7 +253,7 @@ end
         @test nrow(df) > 0
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataLatestContinuous(
             monitoring_location_id=["USGS-05427718", "USGS-05427719"],
             parameter_code=["00060", "00065"],
@@ -275,7 +264,7 @@ end
         @test "latest_continuous_id" in string.(names(df))
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataLatestDaily(
             monitoring_location_id=["USGS-05427718", "USGS-05427719"],
             parameter_code=["00060", "00065"],
@@ -286,7 +275,7 @@ end
         @test "latest_daily_id" in string.(names(df))
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataFieldMeasurements(
             monitoring_location_id="USGS-05427718",
             unit_of_measure="ft^3/s",
@@ -299,7 +288,7 @@ end
         @test "field_measurement_id" in string.(names(df))
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataChannelMeasurements(
             monitoring_location_id="USGS-02238500",
             limit=200,
@@ -309,7 +298,7 @@ end
         @test response.status == 200
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataFieldMetadata(
             monitoring_location_id="USGS-02238500",
             limit=200,
@@ -319,7 +308,7 @@ end
         @test response.status == 200
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataCombinedMetadata(
             monitoring_location_id="USGS-05407000",
             limit=200,
@@ -329,7 +318,7 @@ end
         @test response.status == 200
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataTimeSeriesMetadata(
             bbox=[-89.840355, 42.853411, -88.818626, 43.422598],
             parameter_code=["00060", "00065", "72019"],
@@ -343,7 +332,7 @@ end
 end
 
 @testset "WaterData Reference Tables Live" begin
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataReferenceTable("agency-codes")
     end
     if df !== nothing
@@ -351,7 +340,7 @@ end
         @test nrow(df) > 0
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataReferenceTable("agency-codes";
                                     query=Dict("id" => "AK001,AK008", "limit" => "20"))
     end
@@ -362,7 +351,7 @@ end
 end
 
 @testset "WaterData Stats Live" begin
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataStatsPOR(
             monitoring_location_id="USGS-12451000",
             parameter_code="00060",
@@ -374,7 +363,7 @@ end
         @test nrow(df) > 0
     end
 
-    df, response = _try_waterdata() do
+    df, response = _try_live(service_name="WaterData") do
         readWaterDataStatsDateRange(
             monitoring_location_id="USGS-12451000",
             parameter_code="00060",

@@ -1,4 +1,5 @@
 # Testing the NLDI functions
+include("TestUtils.jl")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Offline parsing tests — deterministic, no network required
@@ -83,46 +84,74 @@ end
 @testset "NLDI Live Endpoint" begin
 
     # basin query
-    df, response = readNLDIbasin("WQP", "USGS-054279485")
-    @test response.status == 200
-    @test nrow(df) > 0
-    @test occursin("Polygon", string(df.geometry_type[1]))
+    df, response = _try_live(service_name="NLDI") do
+        readNLDIbasin("WQP", "USGS-054279485")
+    end
+    if df !== nothing
+        @test response.status == 200
+        @test nrow(df) > 0
+        @test occursin("Polygon", string(df.geometry_type[1]))
+    end
 
     # flowlines query using comid
-    df, response = readNLDIflowlines("UM", comid=13294314, distance=50)
-    @test response.status == 200
-    @test nrow(df) > 0
-    @test occursin("LineString", string(df.geometry_type[1]))
+    df, response = _try_live(service_name="NLDI") do
+        readNLDIflowlines("UM", comid=13294314, distance=50)
+    end
+    if df !== nothing
+        @test response.status == 200
+        @test nrow(df) > 0
+        @test occursin("LineString", string(df.geometry_type[1]))
+    end
 
     # features by feature source (no navigation)
-    df, response = readNLDIfeatures(feature_source="WQP", feature_id="USGS-054279485")
-    @test response.status == 200
-    @test nrow(df) > 0
+    df, response = _try_live(service_name="NLDI") do
+        readNLDIfeatures(feature_source="WQP", feature_id="USGS-054279485")
+    end
+    if df !== nothing
+        @test response.status == 200
+        @test nrow(df) > 0
+    end
 
     # features by lat/long
-    df, response = readNLDIfeatures(lat=43.087, long=-89.509)
-    @test response.status == 200
-    @test nrow(df) > 0
+    df, response = _try_live(service_name="NLDI") do
+        readNLDIfeatures(lat=43.087, long=-89.509)
+    end
+    if df !== nothing
+        @test response.status == 200
+        @test nrow(df) > 0
+    end
 
     # searchNLDI — basin
-    result, response = searchNLDI(feature_source="WQP", feature_id="USGS-054279485", find="basin")
-    @test response.status == 200
-    @test isa(result, AbstractDict)
-    @test haskey(result, "features")
-    @test length(result["features"]) > 0
+    result, response = _try_live(service_name="NLDI") do
+        searchNLDI(feature_source="WQP", feature_id="USGS-054279485", find="basin")
+    end
+    if result !== nothing
+        @test response.status == 200
+        @test isa(result, AbstractDict)
+        @test haskey(result, "features")
+        @test length(result["features"]) > 0
+    end
 
     # searchNLDI — flowlines
-    result, response = searchNLDI(feature_source="WQP",
+    result, response = _try_live(service_name="NLDI") do
+        searchNLDI(feature_source="WQP",
                                   feature_id="USGS-054279485",
                                   navigation_mode="UM",
                                   find="flowlines")
-    @test response.status == 200
-    @test isa(result, AbstractDict)
-    @test haskey(result, "features")
+    end
+    if result !== nothing
+        @test response.status == 200
+        @test isa(result, AbstractDict)
+        @test haskey(result, "features")
+    end
 
     # searchNLDI — features by lat/long
-    result, response = searchNLDI(lat=43.087, long=-89.509, find="features")
-    @test response.status == 200
-    @test isa(result, AbstractDict)
-    @test haskey(result, "features")
+    result, response = _try_live(service_name="NLDI") do
+        searchNLDI(lat=43.087, long=-89.509, find="features")
+    end
+    if result !== nothing
+        @test response.status == 200
+        @test isa(result, AbstractDict)
+        @test haskey(result, "features")
+    end
 end

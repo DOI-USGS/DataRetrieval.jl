@@ -1,19 +1,5 @@
 # Tests of NWIS query functions
-# Known NWIS connectivity issues: don't fail on timeout/connection errors.
-function _try_nwis(f)
-    try
-        return f()
-    catch e
-        if e isa HTTP.ExceptionRequest.StatusError && (e.status == 503 || e.status == 504 || e.status == 429)
-            @warn "NWIS service unavailable ($(e.status)). Skipping test."
-            return nothing, nothing
-        elseif e isa HTTP.Exceptions.HTTPError
-            @warn "NWIS connection/timeout error: $e. Skipping test."
-            return nothing, nothing
-        end
-        rethrow(e)
-    end
-end
+include("TestUtils.jl")
 
 @testset "NWIS queries" begin
     # Tests of functions that actually perform NWIS queries
@@ -23,7 +9,7 @@ end
     @test_throws ArgumentError readNWISpCode("00060")
 
     # daily values — known site and date range
-    df, response = _try_nwis() do
+    df, response = _try_live(service_name="NWIS") do
         readNWISdv("02177000", "00060",
                    startDate="2012-09-01", endDate="2012-09-02")
     end
@@ -39,7 +25,7 @@ end
     end
 
     # site info — single site
-    df, response = _try_nwis() do
+    df, response = _try_live(service_name="NWIS") do
         readNWISsite("05212700")
     end
     if df !== nothing
@@ -54,7 +40,7 @@ end
     end
 
     # site info — multiple sites
-    df, response = _try_nwis() do
+    df, response = _try_live(service_name="NWIS") do
         readNWISsite(["07334200", "05212700"])
     end
     if df !== nothing
@@ -65,7 +51,7 @@ end
     end
 
     # unit/instantaneous data
-    df, response = _try_nwis() do
+    df, response = _try_live(service_name="NWIS") do
         readNWISunit("01646500", "00060",
                      startDate="2022-12-29",
                      endDate="2022-12-29")
