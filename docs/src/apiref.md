@@ -15,218 +15,95 @@ CurrentModule = DataRetrieval
 
 ## NWIS Functions
 Functions that are related to the
-[National Water Information System(NWIS)](https://waterdata.usgs.gov/nwis).
+[National Water Information System (NWIS)](https://waterdata.usgs.gov/nwis).
 
-```@docs
-readNWIS
+```@meta
+CurrentModule = DataRetrieval.NWIS
 ```
 
 ```@docs
-readNWISdv
-```
-
-```@docs
-readNWISpCode
-```
-
-```@docs
-readNWISqw
-```
-
-```@docs
-readNWISqwdata
-```
-
-```@docs
-readNWISsite
-```
-
-```@docs
-readNWISunit
-```
-
-```@docs
-readNWISuv
-```
-
-```@docs
-readNWISiv
+url
+dv
+pcode
+qwdata
+site
+unit
+uv
+iv
 ```
 
 ## WQP Functions
 Functions that are related to the
 [Water Quality Portal](https://waterqualitydata.us/).
 
-```@docs
-readWQPdata
+```@meta
+CurrentModule = DataRetrieval.WQP
 ```
 
 ```@docs
-readWQPresults
-```
-
-```@docs
-whatWQPsites
-```
-
-```@docs
-whatWQPorganizations
-```
-
-```@docs
-whatWQPprojects
-```
-
-```@docs
-whatWQPactivities
-```
-
-```@docs
-whatWQPdetectionLimits
-```
-
-```@docs
-whatWQPhabitatMetrics
-```
-
-```@docs
-whatWQPprojectWeights
-```
-
-```@docs
-whatWQPactivityMetrics
+url
+data
+results
+sites
+organizations
+projects
+activities
+detection_limits
+habitat_metrics
+project_weights
+activity_metrics
 ```
 
 ## WaterData Functions
 Functions that are related to the
-[USGS WaterData samples-data API](https://api.waterdata.usgs.gov/samples-data/docs#/).
+[USGS Water Data APIs](https://api.waterdata.usgs.gov/samples-data/docs#/).
 
-```@docs
-readWaterDataSamples
+```@meta
+CurrentModule = DataRetrieval.WaterData
 ```
 
 ```@docs
-readWaterData
-```
-
-```@docs
-readWaterDataCodes
-```
-
-```@docs
-checkWaterDataOGCRequests
-```
-
-```@docs
-getWaterDataOGCParams
-```
-
-```@docs
-readWaterDataResults
-```
-
-```@docs
-whatWaterDataLocations
-```
-
-```@docs
-whatWaterDataActivities
-```
-
-```@docs
-whatWaterDataProjects
-```
-
-```@docs
-whatWaterDataOrganizations
-```
-
-```@docs
-readWaterDataDaily
-```
-
-```@docs
-readWaterDataContinuous
-```
-
-```@docs
-whatWaterDataMonitoringLocations
-```
-
-```@docs
-readWaterDataTimeSeriesMetadata
-```
-
-```@docs
-readWaterDataLatestContinuous
-```
-
-```@docs
-readWaterDataLatestDaily
-```
-
-```@docs
-readWaterDataFieldMeasurements
-```
-
-```@docs
-readWaterDataChannelMeasurements
-```
-
-```@docs
-readWaterDataFieldMetadata
-```
-
-```@docs
-readWaterDataCombinedMetadata
-```
-
-```@docs
-readWaterDataReferenceTable
-```
-
-```@docs
-readWaterDataStatsPOR
-```
-
-```@docs
-readWaterDataStatsDateRange
+samples
+data
+codes
+ogc_requests
+ogc_params
+results
+locations
+activities
+projects
+organizations
+daily
+continuous
+monitoring_locations
+series_metadata
+latest_continuous
+latest_daily
+field_measurements
+channel_measurements
+field_metadata
+combined_metadata
+reference_table
+stats_por
+stats_date_range
 ```
 
 ## NLDI Functions
 Functions that are related to the
 [USGS NLDI API](https://api.water.usgs.gov/nldi/swagger-ui/index.html).
 
-```@docs
-readNLDIflowlines
+```@meta
+CurrentModule = DataRetrieval.NLDI
 ```
 
 ```@docs
-readNLDIbasin
+flowlines
+basin
+features
+search
 ```
 
 ```@docs
-readNLDIfeatures
-```
-
-```@docs
-searchNLDI
-```
-
-```@docs
-constructNWISURL
-```
-
-```@docs
-constructWQPURL
-```
-
-## Utility Functions
-
-```@docs
-setUSGSAPIToken!
-```
-
-```@docs
-clearUSGSAPIToken!
+set_token!
+clear_token!
 ```

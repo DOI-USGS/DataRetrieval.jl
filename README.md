@@ -20,7 +20,7 @@ ported as expected, please open an
 ## Introduction
 
 USGS data access is actively transitioning from legacy NWIS web services to
-USGS Water Data APIs. In general, prefer `readWaterData*` functions for new
+USGS Water Data APIs. In general, prefer `WaterData.*` functions for new
 workflows when equivalent functionality exists.
 
 Discrete water-quality data availability and formats are also evolving. For
@@ -33,20 +33,20 @@ broader status and migration context from the upstream R ecosystem, see:
 
 Use this quick map to pick the Julia function family:
 
-1. Get instantaneous USGS data: `readWaterDataContinuous` (or latest values
-    via `readWaterDataLatestContinuous`).
-2. Get daily USGS data: `readWaterDataDaily` (or latest values via
-    `readWaterDataLatestDaily`).
+1. Get instantaneous USGS data: `WaterData.continuous` (or latest values
+    via `WaterData.latest_continuous`).
+2. Get daily USGS data: `WaterData.daily` (or latest values via
+    `WaterData.latest_daily`).
 3. Get discrete USGS groundwater field measurements:
-    `readWaterDataFieldMeasurements`.
+    `WaterData.field_measurements`.
 4. Get water-quality data from the Water Quality Portal:
-    `readWQPdata` / `readWQPresults`.
-5. Get USGS discrete water-quality sample data: `readWaterDataSamples`.
-6. Get USGS time-series metadata: `readWaterDataTimeSeriesMetadata`.
-7. Discover NLDI data: `searchNLDI`, `readNLDIfeatures`,
-    `readNLDIflowlines`, `readNLDIbasin`.
-8. Get daily data statistics: `readWaterDataStatsPOR` or
-    `readWaterDataStatsDateRange`.
+    `WQP.data` / `WQP.results`.
+5. Get USGS discrete water-quality sample data: `WaterData.samples`.
+6. Get USGS time-series metadata: `WaterData.series_metadata`.
+7. Discover NLDI data: `NLDI.search`, `NLDI.features`,
+    `NLDI.flowlines`, `NLDI.basin`.
+8. Get daily data statistics: `WaterData.stats_por` or
+    `WaterData.stats_date_range`.
 
 
 ## Installation
@@ -64,11 +64,11 @@ pkg> add https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git
 ## Usage
 
 The package is designed to be used in a similar manner to the R package.
-The examples below focus on the newer `readWaterData*` functions.
+The examples below focus on the newer `WaterData.*` functions.
 
-### WaterData API Token (Recommended)
+### Waterdata API Token (Recommended)
 
-USGS WaterData APIs may rate limit unauthenticated requests. For higher rate
+USGS Waterdata APIs may rate limit unauthenticated requests. For higher rate
 limits, register for an API key at
 [https://api.waterdata.usgs.gov/signup/](https://api.waterdata.usgs.gov/signup/)
 and set it as an environment variable before using DataRetrieval.jl:
@@ -81,22 +81,22 @@ You can also set a token for only the current Julia session:
 
 ```julia
 julia> using DataRetrieval
-julia> setUSGSAPIToken!("your_api_key_here")
+julia> set_token!("your_api_key_here")
 ```
 
 To clear the session-specific token override:
 
 ```julia
-julia> clearUSGSAPIToken!()
+julia> clear_token!()
 ```
 
-### New WaterData API Examples
+### New Waterdata API Examples
 
 ```julia
 julia> using DataRetrieval
 
 # 1) Instantaneous data (continuous)
-julia> iv, iv_response = readWaterDataContinuous(
+julia> iv, iv_response = WaterData.continuous(
            monitoring_location_id="USGS-06904500",
            parameter_code="00065",
            time="2025-01-01/2025-01-03",
@@ -104,7 +104,7 @@ julia> iv, iv_response = readWaterDataContinuous(
        )
 
 # 2) Daily data
-julia> dv, dv_response = readWaterDataDaily(
+julia> dv, dv_response = WaterData.daily(
            monitoring_location_id="USGS-05427718",
            parameter_code="00060",
            time="2025-01-01/2025-01-07",
@@ -112,29 +112,29 @@ julia> dv, dv_response = readWaterDataDaily(
        )
 
 # 3) Latest values (continuous and daily)
-julia> latest_iv, _ = readWaterDataLatestContinuous(
+julia> latest_iv, _ = WaterData.latest_continuous(
            monitoring_location_id=["USGS-05427718", "USGS-05427719"],
            parameter_code=["00060", "00065"],
            limit=200,
        )
 
-julia> latest_dv, _ = readWaterDataLatestDaily(
+julia> latest_dv, _ = WaterData.latest_daily(
            monitoring_location_id=["USGS-05427718", "USGS-05427719"],
            parameter_code=["00060", "00065"],
            limit=200,
        )
 
 # 4) USGS samples-data API
-julia> samples, samples_response = readWaterDataSamples(
+julia> samples, samples_response = WaterData.samples(
            service="results",
            profile="narrow",
-           monitoringLocationIdentifier="USGS-05288705",
-           activityStartDateLower="2024-10-01",
-           activityStartDateUpper="2025-04-24",
+           monitoring_location_identifier="USGS-05288705",
+           activity_start_date_lower="2024-10-01",
+           activity_start_date_upper="2025-04-24",
        )
 
 # 5) Daily statistics
-julia> stats_por, _ = readWaterDataStatsPOR(
+julia> stats_por, _ = WaterData.stats_por(
            monitoring_location_id="USGS-12451000",
            parameter_code="00060",
            start_date="01-01",
@@ -156,10 +156,10 @@ Legacy NWIS functions are still available where services remain active.
 
 ```julia
 julia> using DataRetrieval
-julia> df, response = readNWISsite("05114000")
+julia> df, response = NWIS.site("05114000")
 ```
 
-The `readNWISsite` function returns a `DataFrame` containing the site
+The `NWIS.site` function returns a `DataFrame` containing the site
 information and a `HTTP.Messages.Response` object containing the raw API GET
 query response. The `DataFrame` can be printed to the console:
 

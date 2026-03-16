@@ -6,14 +6,14 @@ using Dates
 using JSON
 using CSV
 # Standard tests setup
-include("TestUtils.jl")
+isdefined(Main, :_try_live) || include("test_utils.jl")
 
 @testset "All Tests" begin
-    include("NWISURLtests.jl")
-    include("NWISRDBtests.jl")
-    include("NWISquerytests.jl")
-    include("WQPtests.jl")
-    include("WaterDatatests.jl")
-    include("NLDItests.jl")
-    include("Utilitiestests.jl")
+    include("nwis_url_tests.jl")
+    include("nwis_rdb_tests.jl")
+    include("nwis_query_tests.jl")
+    include("wqp_tests.jl")
+    include("waterdata_tests.jl")
+    include("nldi_tests.jl")
+    include("utilities_tests.jl")
 end
