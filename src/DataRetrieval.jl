@@ -12,10 +12,10 @@ include("utilities.jl")
 export set_token!, clear_token!
 
 # Include submodules
-include("waterdata.jl")
-include("nwis.jl")
-include("wqp.jl")
-include("nldi.jl")
+include("WaterData.jl")
+include("NWIS.jl")
+include("WQP.jl")
+include("NLDI.jl")
 
 export WaterData, NWIS, WQP, NLDI
 
