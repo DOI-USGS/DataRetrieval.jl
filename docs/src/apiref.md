@@ -103,6 +103,10 @@ features
 search
 ```
 
+```@meta
+CurrentModule = DataRetrieval
+```
+
 ```@docs
 set_token!
 clear_token!

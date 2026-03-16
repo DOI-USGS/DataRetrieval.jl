@@ -369,16 +369,10 @@ Function to obtain parameter code information from the Nwis web service.
 """
 function pcode(pcodes)
     _warn_decommission_once!()
-    base_url = "https://nwis.waterdata.usgs.gov/usa/nwis/pmcodes/?"
-    query_params = Dict(
-        "radio_pm_search" => "pm_nm",
-        "pm_nm" => _query_value(pcodes),
-        "show" => "parameter_group_nm,parameter_nm,casrn,srsname,parameter_units",
-        "format" => "rdb"
-    )
-    obs_url = string(base_url, HTTP.escapeuri(query_params))
-    df, response = read(obs_url)
-    return df, response
+    throw(ArgumentError(
+        "NWIS parameter code service (NWIS.pcode) is no longer supported by the USGS. " *
+        "Please use Waterdata.reference_table(\"parameter-codes\") instead."
+    ))
 end
 
 

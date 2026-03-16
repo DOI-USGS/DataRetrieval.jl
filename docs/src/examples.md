@@ -124,7 +124,7 @@ In this example we identify sites with chloride measurements in New Jersey (stat
 ```@example NJchloride
 using DataRetrieval
 # Find locations with Chloride measurements
-njcl, response = WaterData.locations(stateFips="US:34",
+njcl, response = WaterData.locations(state_fips="US:34",
                                     characteristic="Chloride");
 # print the number of sites found
 nrow(njcl)
@@ -137,9 +137,9 @@ We can also retrieve the actual measurements for a specific location.
 ```@example NJchloride
 # Get narrow profile results for a specific monitoring location
 results, response = WaterData.results(
-    monitoringLocationIdentifier="USGS-01408029",
+    monitoring_location_identifier="USGS-01408029",
     characteristic="Chloride",
-    activityStartDateLower="2020-01-01"
+    activity_start_date_lower="2020-01-01"
 );
 
 # display the first few results
