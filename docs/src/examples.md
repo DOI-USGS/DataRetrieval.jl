@@ -1,3 +1,5 @@
+# Examples
+
 Modern development should use `WaterData.*` functions, which query the newer USGS Waterdata OGC and Samples APIs. These services are more performant and return cleaner, modern data formats.
 
 ## Index
@@ -48,11 +50,15 @@ df
 In this example we fetch and plot instantaneous (continuous) flow data for site "01646500" (Potomac River near Washington D.C.) for December 1, 2022.
 
 ```@example 01646500
-using DataRetrieval
+using DataRetrieval, DataFrames
 siteID = "USGS-01646500"
 df, response = WaterData.continuous(monitoring_location_id=siteID, 
                                     parameter_code="00060", 
-                                    time="2022-12-01/2022-12-01");
+                                    time="2022-12-01/2022-12-05");
+# Clean up missing values and sort the data
+df = dropmissing(df, [:time, :value])
+sort!(df, :time)
+
 # display the first row
 first(df)
 ```
@@ -66,10 +72,10 @@ pcodedf
 
 Now we plot the discharge data. Note that column names in the modern API are standardized (e.g., `time` and `value`).
 
-```julia
+```@example 01646500
 using Plots
 plot(df.time, df.value,
-     title="Discharge at Little Falls Pump Station, Dec. 1, 2022",
+     title="Discharge at Potomac River near Washington D.C.",
      ylabel="Discharge (ft³/s)",
      xlabel="Time",
      xrotation=60,
@@ -82,11 +88,16 @@ plot(df.time, df.value,
 In this example we fetch and plot daily groundwater levels (parameter code "72019") for the first six months of 2012.
 
 ```@example 393617075380403
-using DataRetrieval
+using DataRetrieval, DataFrames
 siteID = "USGS-393617075380403"
 df, response = WaterData.daily(monitoring_location_id=siteID, 
                               parameter_code="72019",
                               time="2012-01-01/2012-06-30");
+
+# Clean up missing values and sort the data
+dropmissing!(df, :value)
+sort!(df, :time)
+
 # display the first row
 first(df)
 ```
@@ -100,7 +111,7 @@ pcodedf
 
 Plot the groundwater levels:
 
-```julia
+```@example 393617075380403
 using Plots
 # Use the value column directly
 plot(df.time, df.value,
@@ -109,8 +120,60 @@ plot(df.time, df.value,
      xlabel="Time",
      xrotation=60,
      label="Groundwater Level",
+     yflip=true,
      dpi=200,
      margin=5Plots.mm)
+```
+
+## NLDI Examples
+
+The Network Linked Data Index (NLDI) API provides functions to navigate flowlines, find basin boundaries, and discover linked features.
+
+### Finding a Basin
+
+In this example, we find the basin for a specific NWIS site.
+
+```@example nldi_basin
+using DataRetrieval, GeoDataFrames
+df_basin, response = NLDI.basin("nwissite", "USGS-01491000");
+
+# display the basin data frame
+first(df_basin)
+```
+
+### Navigating Flowlines
+
+We can also navigate upstream or downstream from a feature to find flowlines.
+
+```@example nldi_basin
+# Navigate upstream main (UM) up to 10 km
+df_flow, response = NLDI.flowlines("UM", feature_source="nwissite", feature_id="USGS-01491000", distance=10);
+
+# display the flowlines
+first(df_flow)
+```
+
+We can then plot the basin and flowlines geometries directly.
+
+```@example nldi_basin
+using Plots
+p = plot(df_basin.geometry, fillalpha=0.2, c=:blue, label="Basin")
+plot!(p, df_flow.geometry, c=:red, linewidth=2, label="Flowlines UM")
+title!("Site 01491000 Basin & Flowlines")
+```
+
+### Retrieving Linked Features
+
+You can also use NLDI to find all linked features for a given source, or search along navigation lines. We will grab the first few `nwissite` features and view their rich metadata.
+
+```@example nldi_features
+using DataRetrieval, GeoDataFrames
+
+# Retrieve all water quality portal locations
+df_features, response = NLDI.features_by_data_source("nwissite");
+
+# display the properties available
+first(df_features, 3)
 ```
 
 ## Water Quality Portal (WQP) / Samples API Examples
@@ -142,8 +205,8 @@ results, response = WaterData.results(
     activity_start_date_lower="2020-01-01"
 );
 
-# display the first few results
-first(results, 5)
+# display the first result
+first(results, 1)
 ```
 
 ## Summary of Modern vs Legacy Functions

@@ -26,3 +26,9 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Test"]
+
+[weakdeps]
+GeoDataFrames = "62cb38b5-d8d2-4862-a48e-6a340996859f"
+
+[extensions]
+NLDIGeoDataFramesExt = "GeoDataFrames"

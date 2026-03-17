@@ -4,6 +4,10 @@
 Provides functions for retrieving data from the Network Linked Data Index (NLDI) API.
 Includes functions to navigate flowlines (`flowlines`), find upstream/downstream basin 
 boundaries (`basin`), and discover linked features (`features` and `search`).
+
+**Note:** If you wish to receive spatial features as genuine `GeoDataFrame`s instead 
+of standard Julia `DataFrame`s containing raw GeoJSON geometries, you must add and 
+load `GeoDataFrames.jl` in your environment (`using GeoDataFrames`).
 """
 module NLDI
 
@@ -188,7 +192,29 @@ function features(; data_source=nothing,
 end
 
 """
-    search(; feature_source=nothing, feature_id=nothing, navigation_mode=nothing, data_source=nothing, find="features", comid=nothing, lat=nothing, long=nothing, distance=50)
+    features_by_data_source(data_source; as_json=false)
+
+Gets all features found for the specified data source as points in WGS84 lat/long
+coordinates. Returns a DataFrame or GeoDataFrame if GeoDataFrames is loaded.
+"""
+function features_by_data_source(data_source; as_json=false)
+    if isnothing(data_source)
+        throw(ArgumentError("data_source must be provided."))
+    end
+    _validate_data_source(data_source)
+    
+    url = string(API_BASE_URL, "/", data_source)
+    err_msg = "Error getting features for data source '$data_source'"
+    
+    feature_collection, response = _query_nldi(url, Dict{String, String}(), err_msg)
+    if as_json
+        return feature_collection, response
+    end
+    return _features_to_df(feature_collection), response
+end
+
+"""
+    search(; feature_source=nothing, feature_id=nothing, navigation_mode=nothing, data_source=nothing, find="features", comid=nothing, lat=nothing, long=nothing, distance=50, as_json=false)
 """
 function search(; feature_source=nothing,
                 feature_id=nothing,
@@ -256,7 +282,25 @@ function _features_to_df(feature_collection)
         
         push!(rows, row_dict)
     end
-    return isempty(rows) ? DataFrame() : DataFrame(rows)
+    fallback_df = isempty(rows) ? DataFrame() : DataFrame(rows)
+    
+    ext = Base.get_extension(parentmodule(@__MODULE__), :NLDIGeoDataFramesExt)
+    if ext !== nothing
+        return ext._to_geodataframe(feature_collection, fallback_df)
+    end
+    
+    return _to_geodataframe_fallback(feature_collection, fallback_df)
+end
+
+# Fallback hook for GeoDataFrames extension
+const _WARNED_GEODATAFRAMES = Ref{Bool}(false)
+
+function _to_geodataframe_fallback(feature_collection, fallback_df)
+    if !_WARNED_GEODATAFRAMES[]
+        @warn "GeoDataFrames.jl is not loaded. NLDI spatial features are being returned as standard DataFrames with raw GeoJSON geometries. To receive true GeoDataFrames, run `import Pkg; Pkg.add(\"GeoDataFrames\")` and `using GeoDataFrames`."
+        _WARNED_GEODATAFRAMES[] = true
+    end
+    return fallback_df
 end
 
 end

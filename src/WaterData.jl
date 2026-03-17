@@ -664,8 +664,12 @@ end
 function _try_datetime(x)
   x === missing && return missing
   s = string(x)
-  for fmt in (dateformat"yyyy-mm-ddTHH:MM:SSZ", dateformat"yyyy-mm-ddTHH:MM:SS", dateformat"yyyy-mm-dd")
-    dt = tryparse(DateTime, s, fmt)
+  
+  # Strip timezone offsets like +00:00 or -05:00 as base DateTime doesn't support them natively
+  s_clean = replace(s, r"([+-]\d{2}:\d{2}|Z)$" => "")
+
+  for fmt in (dateformat"yyyy-mm-ddTHH:MM:SS", dateformat"yyyy-mm-dd")
+    dt = tryparse(DateTime, s_clean, fmt)
     dt === nothing || return dt
   end
   return missing

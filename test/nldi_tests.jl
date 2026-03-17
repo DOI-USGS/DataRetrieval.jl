@@ -156,3 +156,16 @@ end
         @test haskey(result, "features")
     end
 end
+
+@testset "features_by_data_source" begin
+    # test we can pull nwissite
+    df, response = _try_live(service_name="NLDI features_by_data_source") do
+        NLDI.features_by_data_source("wqp")
+    end
+    if df !== nothing
+        @test response.status == 200
+        @test isa(df, DataFrames.DataFrame)
+        @test "geometry" in names(df)
+        @test "identifier" in names(df)
+    end
+end
