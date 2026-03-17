@@ -2,7 +2,11 @@
 
 [![USGS-category-image](https://img.shields.io/badge/USGS-Core-green.svg)](https://owi.usgs.gov/R/packages.html#core)
 
-DataRetrieval.jl is a Julia alternative to the R [dataRetrieval](https://code.usgs.gov/water/dataRetrieval) package for obtaining USGS water data directly from web services. There is also a [Python dataretrieval](https://github.com/DOI-USGS/dataretrieval-python) package designed to perform the same functionality in the Python language.
+DataRetrieval.jl is a Julia alternative to the
+R [dataRetrieval](https://code.usgs.gov/water/dataRetrieval)
+package for obtaining USGS water data directly from web services.
+There is also a [Python dataretrieval](https://github.com/DOI-USGS/dataretrieval-python)
+package with the same functionality.
 
 Current Julia support includes NWIS, WQP, and WaterData samples-data API
 functions.
@@ -10,11 +14,10 @@ functions.
 
 **Note:** DataRetrieval.jl is currently maintained by an AI agent tasked with
 keeping parity with the R
-[dataRetrieval](https://github.com/DOI-USGS/dataRetrieval) package. While this
-workflow helps keep features aligned, not all functionality has been fully
-human-tested end to end. If something appears incorrect, incomplete, or not
-ported as expected, please open an
-[issue](https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/issues).
+[dataRetrieval](https://github.com/DOI-USGS/dataRetrieval) package.
+As a result, not all functionality has been human-tested.
+If something appears incorrect, incomplete, or not
+ported as expected, please open an issue.
 
 
 ## Introduction
@@ -22,31 +25,6 @@ ported as expected, please open an
 USGS data access is actively transitioning from legacy NWIS web services to
 USGS Water Data APIs. In general, prefer `WaterData.*` functions for new
 workflows when equivalent functionality exists.
-
-Discrete water-quality data availability and formats are also evolving. For
-broader status and migration context from the upstream R ecosystem, see:
-
-- <https://doi-usgs.github.io/dataRetrieval/articles/read_waterdata_functions.html>
-- <https://doi-usgs.github.io/dataRetrieval/articles/Status.html>
-
-## What would you like to do?
-
-Use this quick map to pick the Julia function family:
-
-1. Get instantaneous USGS data: `WaterData.continuous` (or latest values
-    via `WaterData.latest_continuous`).
-2. Get daily USGS data: `WaterData.daily` (or latest values via
-    `WaterData.latest_daily`).
-3. Get discrete USGS groundwater field measurements:
-    `WaterData.field_measurements`.
-4. Get water-quality data from the Water Quality Portal:
-    `WQP.data` / `WQP.results`.
-5. Get USGS discrete water-quality sample data: `WaterData.samples`.
-6. Get USGS time-series metadata: `WaterData.series_metadata`.
-7. Discover NLDI data: `NLDI.search`, `NLDI.features`,
-    `NLDI.flowlines`, `NLDI.basin`.
-8. Get daily data statistics: `WaterData.stats_por` or
-    `WaterData.stats_date_range`.
 
 
 ## Installation
@@ -190,96 +168,9 @@ and can be found [here](https://rconnect.usgs.gov/DataRetrieval-jl/).
 Documentation for the "dev" branch is also available, and can be found [here](https://rconnect.usgs.gov/DataRetrieval-jl-dev/).
 
 
-## Contributing
-
-Contributions to the package are welcome. Please see the
-[contributing guidelines](https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/CONTRIBUTING.md)
-for more information.
-
-## License
-
-The package is licensed per the
-[LICENSE.md](https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/LICENSE)
-file.
-
-## Acknowledgements
-
-The package was developed by @jhariharan.
-
-## Disclaimer
-
-See [DISCLAIMER.md](https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/DISCLAIMER.md).
-
-## Contact
-
-For questions or comments about the package, please contact
-[J. Hariharan](mailto:jhariharan@usgs.gov)
-
 ## Citing `DataRetrieval.jl`
 
 When citing `DataRetrieval.jl` please use:
 
 Hariharan, J.A., 2023, DataRetrieval.jl-Julia package for obtaining USGS water data directly from web services: U.S. Geological Survey software
 release, Julia package, Reston, Va., <https://doi.org/10.5066/P95XLHUH>.
-
-## Additional Publication Details
-
-Additional metadata about this publication, not found in other parts of
-the page is in this table.
-
-<!--html_preserve-->
-<table>
-<tbody>
-<tr>
-<th scope="row">
-Publication type
-</th>
-<td>
-Julia language package
-</td>
-</tr>
-<tr>
-<th scope="row">
-DOI
-</th>
-<td>
-10.5066/P95XLHUH
-</td>
-</tr>
-<tr>
-<th scope="row">
-Year published
-</th>
-<td>
-2023
-</td>
-</tr>
-<tr>
-<th scope="row">
-Year of version
-</th>
-<td>
-2023
-</td>
-</tr>
-<tr>
-<th scope="row">
-Version
-</th>
-<td>
-0.1.0
-</td>
-</tr>
-<tr>
-<th scope="row">
-IPDS
-</th>
-<td>
-IP-152366
-</td>
-</tr>
-</tbody>
-</table>
-
-<cr><!--/html_preserve-->
-
