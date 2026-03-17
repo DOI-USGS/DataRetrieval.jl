@@ -1,3 +1,10 @@
+"""
+    module NLDI
+
+Provides functions for retrieving data from the Network Linked Data Index (NLDI) API.
+Includes functions to navigate flowlines (`flowlines`), find upstream/downstream basin 
+boundaries (`basin`), and discover linked features (`features` and `search`).
+"""
 module NLDI
 
 using HTTP

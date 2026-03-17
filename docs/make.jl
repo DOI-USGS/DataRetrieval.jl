@@ -10,7 +10,7 @@ open(joinpath(@__DIR__, "src", "contributing.md"), "w") do io
     # Point to source contributing file
     println(io, """
     ```@meta
-    EditURL = "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/CONTRIBUTING.md"
+    EditURL = "https://github.com/DOI-USGS/DataRetrieval.jl/blob/main/CONTRIBUTING.md"
     ```
     """)
     # Write the modified contents
@@ -27,7 +27,7 @@ open(joinpath(@__DIR__, "src", "license.md"), "w") do io
     # Point to source license file
     println(io, """
     ```@meta
-    EditURL = "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/LICENSE.md"
+    EditURL = "https://github.com/DOI-USGS/DataRetrieval.jl/blob/main/LICENSE.md"
     ```
     """)
     # Write the modified contents
@@ -43,7 +43,7 @@ open(joinpath(@__DIR__, "src", "disclaimer.md"), "w") do io
     # Point to source disclaimer file
     println(io, """
     ```@meta
-    EditURL = "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/DISCLAIMER.md"
+    EditURL = "https://github.com/DOI-USGS/DataRetrieval.jl/blob/main/DISCLAIMER.md"
     ```
     """)
     # Write the modified contents
@@ -68,7 +68,7 @@ makedocs(
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true",
         edit_link = nothing,
-        repolink = "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl"
+        repolink = "https://github.com/DOI-USGS/DataRetrieval.jl"
     ),
     checkdocs = :exports,
     warnonly = [:example_block]

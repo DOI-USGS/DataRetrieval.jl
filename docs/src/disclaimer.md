@@ -1,5 +1,5 @@
 ```@meta
-EditURL = "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/DISCLAIMER.md"
+EditURL = "https://github.com/DOI-USGS/DataRetrieval.jl/blob/main/DISCLAIMER.md"
 ```
 
 # Disclaimer

@@ -1,3 +1,11 @@
+"""
+    module WaterData
+
+Provides functions for retrieving data from the modernized USGS Water Data API and Samples API.
+Includes functions for generic OGC API retrieval, daily values (`daily`), continuous values 
+(`continuous`), monitoring locations, field measurements, series metadata, and chemical 
+sample results (`samples`, `results`).
+"""
 module WaterData
 
 using HTTP

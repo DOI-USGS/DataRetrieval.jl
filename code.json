@@ -5,40 +5,33 @@
     "description": "Julia version of dataRetrieval",
     "version": "main",
     "status": "Development",
-
     "permissions": {
       "usageType": "openSource",
       "licenses": [
         {
           "name": "Public Domain, CC0-1.0",
-          "URL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/main/LICENSE.md"
+          "URL": "https://raw.githubusercontent.com/DOI-USGS/DataRetrieval.jl/main/LICENSE.md"
         }
       ]
     },
-
-    "homepageURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl",
-    "downloadURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/archive/main/DataRetrieval.jl-main.zip",
-    "disclaimerURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/main/DISCLAIMER.md",
-    "repositoryURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git",
+    "homepageURL": "https://github.com/DOI-USGS/DataRetrieval.jl",
+    "downloadURL": "https://github.com/DOI-USGS/DataRetrieval.jl/archive/refs/heads/main.zip",
+    "disclaimerURL": "https://raw.githubusercontent.com/DOI-USGS/DataRetrieval.jl/main/DISCLAIMER.md",
+    "repositoryURL": "https://github.com/DOI-USGS/DataRetrieval.jl.git",
     "vcs": "git",
-
     "laborHours": 1,
-
     "tags": [
       "Julia",
       "USGS",
       "water"
     ],
-
     "languages": [
       "Julia"
     ],
-
     "contact": {
       "name": "Jayaram Hariharan",
       "email": "jhariharan@usgs.gov"
     },
-
     "date": {
       "metadataLastUpdated": "2023-01-03"
     }
@@ -49,40 +42,33 @@
     "description": "Julia version of dataRetrieval",
     "version": "0.1.0",
     "status": "Release Candidate",
-
     "permissions": {
       "usageType": "openSource",
       "licenses": [
         {
           "name": "Public Domain, CC0-1.0",
-          "URL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/0.1.0/LICENSE.md"
+          "URL": "https://raw.githubusercontent.com/DOI-USGS/DataRetrieval.jl/0.1.0/LICENSE.md"
         }
       ]
     },
-
-    "homepageURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl",
-    "downloadURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/archive/0.1.0/DataRetrieval.jl-0.1.0.zip",
-    "disclaimerURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/raw/0.1.0/DISCLAIMER.md",
-    "repositoryURL": "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git",
+    "homepageURL": "https://github.com/DOI-USGS/DataRetrieval.jl",
+    "downloadURL": "https://github.com/DOI-USGS/DataRetrieval.jl/archive/refs/tags/v0.1.0.zip",
+    "disclaimerURL": "https://raw.githubusercontent.com/DOI-USGS/DataRetrieval.jl/0.1.0/DISCLAIMER.md",
+    "repositoryURL": "https://github.com/DOI-USGS/DataRetrieval.jl.git",
     "vcs": "git",
-
     "laborHours": 1,
-
     "tags": [
       "Julia",
       "USGS",
       "water"
     ],
-
     "languages": [
       "Julia"
     ],
-
     "contact": {
       "name": "Jayaram Hariharan",
       "email": "jhariharan@usgs.gov"
     },
-
     "date": {
       "metadataLastUpdated": "2023-05-09"
     }

@@ -3,7 +3,7 @@
 [![USGS-category-image](https://img.shields.io/badge/USGS-Core-green.svg)](https://owi.usgs.gov/R/packages.html#core)
 
 DataRetrieval.jl is a Julia alternative to the
-R [dataRetrieval](https://code.usgs.gov/water/dataRetrieval)
+R [dataRetrieval](https://github.com/DOI-USGS/dataRetrieval)
 package for obtaining USGS water data directly from web services.
 There is also a [Python dataretrieval](https://github.com/DOI-USGS/dataretrieval-python)
 package with the same functionality.
@@ -36,7 +36,7 @@ following commands in the Julia REPL:
 
 ```julia
 julia> ]
-pkg> add https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git
+pkg> add https://github.com/DOI-USGS/DataRetrieval.jl.git
 ```
 
 ## Usage

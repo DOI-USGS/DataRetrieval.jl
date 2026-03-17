@@ -1,3 +1,10 @@
+"""
+    module WQP
+
+Provides functions for retrieving data from the Water Quality Portal (WQP).
+Includes functions to retrieve results, sites, organizations, projects,
+activities, detection limits, habitat metrics, project weights, and activity metrics.
+"""
 module WQP
 
 using HTTP

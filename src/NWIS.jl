@@ -1,3 +1,13 @@
+"""
+    module NWIS
+
+Provides functions for retrieving legacy data from the National Water Information System (NWIS).
+Includes functions to retrieve daily values (`dv`), instantaneous values (`iv`), and site metadata.
+
+**Note:** Legacy NWIS services are being decommissioned by the USGS. Users are encouraged to 
+migrate to the modernized `DataRetrieval.WaterData` functions (e.g., `WaterData.daily`, 
+`WaterData.continuous`, `WaterData.samples`) which use the new Water Data APIs.
+"""
 module NWIS
 
 using HTTP
