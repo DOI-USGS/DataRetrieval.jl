@@ -122,7 +122,7 @@ Modern water quality queries should prefer the `WaterData.results` or `WaterData
 In this example we identify sites with chloride measurements in New Jersey (state code "US:34").
 
 ```@example NJchloride
-using DataRetrieval
+using DataRetrieval, DataFrames
 # Find locations with Chloride measurements
 njcl, response = WaterData.locations(state_fips="US:34",
                                     characteristic="Chloride");

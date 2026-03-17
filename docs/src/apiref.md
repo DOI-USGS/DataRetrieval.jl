@@ -13,6 +13,13 @@ Pages = ["apiref.md"]
 CurrentModule = DataRetrieval
 ```
 
+```@docs
+NWIS
+WQP
+WaterData
+NLDI
+```
+
 ## NWIS Functions
 Functions that are related to the
 [National Water Information System (NWIS)](https://waterdata.usgs.gov/nwis).
