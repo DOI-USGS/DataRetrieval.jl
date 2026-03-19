@@ -7,8 +7,8 @@ isdefined(Main, :_try_live) || include("test_utils.jl")
 
     # no query params
     url = "https://www.google.com";
-    response = _try_live(service_name="Google") do
-        DataRetrieval._custom_get(url)
+    response, _ = _try_live(service_name="Google") do
+        (DataRetrieval._custom_get(url), nothing)
     end
     if response !== nothing
         @test response.status == 200
@@ -21,8 +21,8 @@ isdefined(Main, :_try_live) || include("test_utils.jl")
     query_params = Dict("statecode"=>"US:38",
                         "startDateLo"=>"07-01-2006",
                         "startDateHi"=>"07-01-2007");
-    response_qp = _try_live(service_name="WQP") do
-        DataRetrieval._custom_get(url, query_params=query_params)
+    response_qp, _ = _try_live(service_name="WQP") do
+        (DataRetrieval._custom_get(url, query_params=query_params), nothing)
     end
     if response_qp !== nothing
         @test response_qp.status == 200
