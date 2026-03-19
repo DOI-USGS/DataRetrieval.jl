@@ -37,7 +37,7 @@ function _resolve_usgs_api_token()
 end
 
 function _default_headers()
-    jdr_version = "v0.1.0"
+    jdr_version = pkgversion(DataRetrieval)
     jdr_user_agent = string("julia-dataretrieval/", jdr_version)
     headers = ["user-agent" => jdr_user_agent]
 

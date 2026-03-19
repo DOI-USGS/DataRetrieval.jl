@@ -63,7 +63,7 @@
                              parameter_cd=["34247", "30234", "32104", "34220"],
                              start_date="2010-11-03", end_date="",
                              service="qw", format = "rdb")
-    exp_url = "https://nwis.waterdata.usgs.gov/nwis/qwdata?multiple_site_no=04024430,04024000&multiple_parameter_cds=34247,30234,32104,34220&param_cd_operator=OR&list_of_search_criteria=multiple_site_no,multiple_parameter_cds&group_key=NONE&sitefile_output_format=html_table&column_name=agency_cd&column_name=site_no&column_name=station_nm&inventory_output=0&rdb_inventory_output=file&TZoutput=0&pm_cd_compare=Greater%20than&radio_parm_cds=previous_parm_cds&qw_attributes=0&format=rdb&rdb_qw_attributes=expanded&date_format=YYYY-MM-DD&rdb_compression=value&qw_sample_wide=0&begin_date=2010-11-03"
+    exp_url = "https://nwis.waterdata.usgs.gov/nwis/qwdata?multiple_site_no=04024430,04024000&multiple_parameter_cds=34247,30234,32104,34220&param_cd_operator=OR&list_of_search_criteria=multiple_site_no,multiple_parameter_cds&group_key=NONE&sitefile_output_format=html_table&column_name=agency_cd&column_name=site_no&column_name=station_nm&inventory_output=0&rdb_inventory_output=file&TZoutput=0&pm_cd_compare=Greater%20than&radio_parm_cds=previous_parm_cds&qw_attributes=0&format=rdb&rdb_qw_attributes=0&date_format=YYYY-MM-DD&rdb_compression=value&qw_sample_wide=0&begin_date=2010-11-03"
     obs_list = split(qwURL, "&")
     exp_list = split(exp_url, "&")
     for obs in obs_list
@@ -258,7 +258,7 @@
     # URL qw single
     url_qw_single = NWIS.url(siteNumber, parameter_cd="01075",
         start_date=startDate, end_date=endDate, service="qw")
-    exp_url = "https://nwis.waterdata.usgs.gov/nwis/qwdata?search_site_no=01594440&search_site_no_match_type=exact&multiple_parameter_cds=01075&param_cd_operator=AND&list_of_search_criteria=search_site_no,multiple_parameter_cds&group_key=NONE&sitefile_output_format=html_table&column_name=agency_cd&column_name=site_no&column_name=station_nm&inventory_output=0&rdb_inventory_output=file&TZoutput=0&pm_cd_compare=Greater%20than&radio_parm_cds=previous_parm_cds&qw_attributes=0&format=rdb&rdb_qw_attributes=expanded&date_format=YYYY-MM-DD&rdb_compression=value&qw_sample_wide=0&begin_date=1985-01-01"
+    exp_url = "https://nwis.waterdata.usgs.gov/nwis/qwdata?search_site_no=01594440&search_site_no_match_type=exact&multiple_parameter_cds=01075&param_cd_operator=AND&list_of_search_criteria=search_site_no,multiple_parameter_cds&group_key=NONE&sitefile_output_format=html_table&column_name=agency_cd&column_name=site_no&column_name=station_nm&inventory_output=0&rdb_inventory_output=file&TZoutput=0&pm_cd_compare=Greater%20than&radio_parm_cds=previous_parm_cds&qw_attributes=0&format=rdb&rdb_qw_attributes=0&date_format=YYYY-MM-DD&rdb_compression=value&qw_sample_wide=0&begin_date=1985-01-01"
     obs_list = split(url_qw_single, "&")
     exp_list = split(exp_url, "&")
     for obs in obs_list
@@ -273,7 +273,7 @@
         siteNumber, parameter_cd=["01075", "00029", "00453"],
         start_date=startDate, end_date=endDate, service="qw"
       )
-    exp_url = "https://nwis.waterdata.usgs.gov/nwis/qwdata?search_site_no=01594440&search_site_no_match_type=exact&multiple_parameter_cds=01075,00029,00453&param_cd_operator=OR&list_of_search_criteria=search_site_no,multiple_parameter_cds&group_key=NONE&sitefile_output_format=html_table&column_name=agency_cd&column_name=site_no&column_name=station_nm&inventory_output=0&rdb_inventory_output=file&TZoutput=0&pm_cd_compare=Greater%20than&radio_parm_cds=previous_parm_cds&qw_attributes=0&format=rdb&rdb_qw_attributes=expanded&date_format=YYYY-MM-DD&rdb_compression=value&qw_sample_wide=0&begin_date=1985-01-01"
+    exp_url = "https://nwis.waterdata.usgs.gov/nwis/qwdata?search_site_no=01594440&search_site_no_match_type=exact&multiple_parameter_cds=01075,00029,00453&param_cd_operator=OR&list_of_search_criteria=search_site_no,multiple_parameter_cds&group_key=NONE&sitefile_output_format=html_table&column_name=agency_cd&column_name=site_no&column_name=station_nm&inventory_output=0&rdb_inventory_output=file&TZoutput=0&pm_cd_compare=Greater%20than&radio_parm_cds=previous_parm_cds&qw_attributes=0&format=rdb&rdb_qw_attributes=0&date_format=YYYY-MM-DD&rdb_compression=value&qw_sample_wide=0&begin_date=1985-01-01"
     obs_list = split(url_qw, "&")
     exp_list = split(exp_url, "&")
     for obs in obs_list

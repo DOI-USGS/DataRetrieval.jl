@@ -178,7 +178,7 @@ function url(site_numbers;
         query_params["qw_attributes"] = "0"
         query_params["format"] = "rdb"
         # Test 265 and 280 expect expanded by default if service is qw
-        query_params["rdb_qw_attributes"] = (expanded == "true" || expanded == true || expanded == "false") ? "expanded" : "0"
+        query_params["rdb_qw_attributes"] = (expanded == true || expanded == "true") ? "expanded" : "0"
         query_params["date_format"] = "YYYY-MM-DD"
         query_params["rdb_compression"] = "value"
         query_params["qw_sample_wide"] = "0"

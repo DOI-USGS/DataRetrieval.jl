@@ -653,7 +653,7 @@ function _cast_columns!(df::DataFrame)
   for c in names(df)
     col_name = lowercase(string(c))
     if col_name in numeric_cols
-      df[!, c] = map(x -> tryparse(Float64, string(x)), df[!, c])
+      df[!, c] = map(x -> x === missing ? missing : tryparse(Float64, string(x)), df[!, c])
     elseif col_name in date_cols
       df[!, c] = map(x -> _try_datetime(x), df[!, c])
     end
