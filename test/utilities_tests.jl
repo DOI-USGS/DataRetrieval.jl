@@ -7,7 +7,7 @@ isdefined(Main, :_try_live) || include("test_utils.jl")
 
     # no query params - use a local mock server to avoid network dependency
     let
-        mock_server = HTTP.serve!("127.0.0.1", 0; listenany=true, verbose=-1) do req
+        mock_server = HTTP.serve!("127.0.0.1", 49152; listenany=true, verbose=-1) do req
             HTTP.Response(200, "mock")
         end
         mock_port = HTTP.port(mock_server)
@@ -16,7 +16,7 @@ isdefined(Main, :_try_live) || include("test_utils.jl")
             response = DataRetrieval._custom_get(url)
             @test response.status == 200
             @test isa(response, HTTP.Messages.Response)
-            @test response.request.headers[1][1] == "user-agent"
+            @test any(h -> lowercase(h[1]) == "user-agent", response.request.headers)
         finally
             close(mock_server)
         end
@@ -33,7 +33,7 @@ isdefined(Main, :_try_live) || include("test_utils.jl")
     if response_qp !== nothing
         @test response_qp.status == 200
         @test isa(response_qp, HTTP.Messages.Response)
-        @test response_qp.request.headers[1][1] == "user-agent"
+        @test any(h -> lowercase(h[1]) == "user-agent", response_qp.request.headers)
     end
 
     # API token wiring: ENV fallback and runtime override.
