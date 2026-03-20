@@ -10,7 +10,7 @@ open(joinpath(@__DIR__, "src", "contributing.md"), "w") do io
     # Point to source contributing file
     println(io, """
     ```@meta
-    EditURL = "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/CONTRIBUTING.md"
+    EditURL = "https://github.com/DOI-USGS/DataRetrieval.jl/blob/main/CONTRIBUTING.md"
     ```
     """)
     # Write the modified contents
@@ -18,6 +18,7 @@ open(joinpath(@__DIR__, "src", "contributing.md"), "w") do io
     println(io, "")
     for line in eachline(joinpath(dirname(@__DIR__), "CONTRIBUTING.md"))
         line = replace(line, "[CONTRIBUTING.md](Contributing.md)" => "[Contributing](@ref)")
+        line = replace(line, "docs/src/imgs/" => "imgs/")
         println(io, "> ", line)
     end
 end
@@ -26,7 +27,7 @@ open(joinpath(@__DIR__, "src", "license.md"), "w") do io
     # Point to source license file
     println(io, """
     ```@meta
-    EditURL = "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/LICENSE.md"
+    EditURL = "https://github.com/DOI-USGS/DataRetrieval.jl/blob/main/LICENSE.md"
     ```
     """)
     # Write the modified contents
@@ -42,7 +43,7 @@ open(joinpath(@__DIR__, "src", "disclaimer.md"), "w") do io
     # Point to source disclaimer file
     println(io, """
     ```@meta
-    EditURL = "https://code.usgs.gov/water/computational-tools/DataRetrieval.jl/-/blob/main/DISCLAIMER.md"
+    EditURL = "https://github.com/DOI-USGS/DataRetrieval.jl/blob/main/DISCLAIMER.md"
     ```
     """)
     # Write the modified contents
@@ -58,12 +59,17 @@ makedocs(
     modules = [DataRetrieval],
     sitename = "DataRetrieval.jl Documentation",
     authors = "J. Hariharan",
+    remotes = nothing,
+    repo = "",
     pages = [
         "index.md", "examples.md", "contributing.md", "license.md",
         "disclaimer.md", "apiref.md"
     ],
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true",
-        edit_link = nothing
-    )
+        edit_link = nothing,
+        repolink = "https://github.com/DOI-USGS/DataRetrieval.jl"
+    ),
+    checkdocs = :exports,
+    warnonly = [:example_block]
 )

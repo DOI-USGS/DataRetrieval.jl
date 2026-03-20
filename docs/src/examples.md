@@ -1,105 +1,83 @@
 # Examples
 
+Modern development should use `WaterData.*` functions, which query the newer USGS Waterdata OGC and Samples APIs. These services are more performant and return cleaner, modern data formats.
+
 ## Index
 
 ```@contents
 Pages = ["examples.md"]
 ```
 
-## NWIS Examples
-These examples use data retrieved from the
-[National Water Information System(NWIS)](https://waterdata.usgs.gov/nwis).
+## Waterdata API Examples
+These examples use data retrieved from the [USGS Waterdata OGC API](https://api.waterdata.usgs.gov/ogcapi/v0) and the [Samples API](https://api.waterdata.usgs.gov/samples-data).
 
 ### Examining Site 01491000
 
-In this example we fetch some data for site "01491000" located on the
-Choptank River near Greensboro, MD.
+In this example we fetch information for site "01491000" located on the Choptank River near Greensboro, MD. Site identifiers in the modern API typically include the agency prefix (e.g., `USGS-`).
 
-First we will obtain information about the site itself.
+First we will obtain metadata about the monitoring location.
 
 ```@example 01491000
 using DataRetrieval
-siteNumber = "01491000"
-df, response = readNWISsite(siteNumber);
+siteID = "USGS-01491000"
+df, response = WaterData.monitoring_locations(monitoring_location_id=siteID);
 
 # print the site information table
 df
 ```
 
-We can also look at the raw API GET query response, which is kept as a
-`HTTP.Messages.Response` object. For example, we can look at the status of
-the GET request; a 200 code, for example, indicates a successful response.
+We can also look at the raw API response status.
 
 ```@example 01491000
 # print the response status code
 response.status
 ```
 
-So as you can see, we were successful in our query (which we knew from
-looking at our formatted data frame earlier anyway).
-
-We can also get actual measurement data for this site, such as daily discharge
-values. We will obtain daily discharge values for the first three days in
-January of 1980 below.
+Now we can get daily discharge values. We will obtain data for the first three days of January 1980.
 
 ```@example 01491000
-df, response = readNWISdv(siteNumber, "00060",
-                          startDate="1980-01-01", endDate="1980-01-03");
+# parameter_code 00060 is discharge
+df, response = WaterData.daily(monitoring_location_id=siteID, 
+                              parameter_code="00060",
+                              time="1980-01-01/1980-01-03");
 
-# print the data frame containing discharge values
+# print the data frame
 df
 ```
 
-Once again we can also examine the raw GET request object. Rather than just
-look at the status of the GET query, this time we will look at the request
-itself, which contains information such as the actual GET query and the
-API host.
+### Plotting Flow Data for Site 01646500
 
-```@example 01491000
-response.request
-```
-
-### Plotting One Day's Flow Data for Site 01646500
-
-In this example we will plot the flow data for one day for site "01646500".
-Site "01646500" is located on the Potomac River near Washington D.C. at the
-Little Falls pump station.
-
-First we can query the instantaneous flow data from December 1, 2022:
+In this example we fetch and plot instantaneous (continuous) flow data for site "01646500" (Potomac River near Washington D.C.) for December 1, 2022.
 
 ```@example 01646500
-using DataRetrieval
-siteNumber = "01646500"
-df, response = readNWISiv(siteNumber, "00060", startDate="2022-12-01",
-                          endDate="2022-12-01");
-# display the first row of the data frame
+using DataRetrieval, DataFrames
+siteID = "USGS-01646500"
+df, response = WaterData.continuous(monitoring_location_id=siteID, 
+                                    parameter_code="00060", 
+                                    time="2022-12-01/2022-12-05");
+# Clean up missing values and sort the data
+df = dropmissing(df, [:time, :value])
+sort!(df, :time)
+
+# display the first row
 first(df)
 ```
 
-We have requested discharge data using the parameter code "00060". We can
-get additional information about this parameter code, such as the units
-discharge is measured in, by using the `readNWISpCode` function.
+We can fetch additional information about the parameter code (units, description) using the reference table service.
 
 ```@example 01646500
-pcodedf, response = readNWISpCode("00060");
+pcodedf, response = WaterData.reference_table("parameter-codes", query=Dict("id" => "00060"));
 pcodedf
 ```
 
-We can see that the units for discharge are cubic feet per second. Now when
-we plot the discharge data, we can properly label the y-axis.
+Now we plot the discharge data. Note that column names in the modern API are standardized (e.g., `time` and `value`).
 
 ```@example 01646500
-# convert the date time column to a DateTime type
-using Dates
-timestamps = Dates.DateTime.(df.datetime, "yyy-mm-dd HH:MM");
-# convert the discharge values to a float type
-discharge = map(x->parse(Float64,x), df."69928_00060");
-# make the plot
 using Plots
-plot(timestamps, discharge,
-     title="Discharge at Little Falls Pump Station, Dec. 1, 2022",
+plot(df.time, df.value,
+     title="Discharge at Potomac River near Washington D.C.",
      ylabel="Discharge (ft³/s)",
-     xlabel="Timestamp",
+     xlabel="Time",
      xrotation=60,
      label="Discharge",
      dpi=200)
@@ -107,65 +85,137 @@ plot(timestamps, discharge,
 
 ### Fetching and Plotting Groundwater Levels from Site 393617075380403
 
-In this example we will fetch and plot daily groundwater levels from site
-"393617075380403". This site is located in the state of Delaware.
-
-First we will fetch the groundwater levels (parameter code "72019")
-for the first six months of 2012 using the `readNWISdv` function.
+In this example we fetch and plot daily groundwater levels (parameter code "72019") for the first six months of 2012.
 
 ```@example 393617075380403
-using DataRetrieval
-siteNumber = "393617075380403"
-df, response = readNWISdv(siteNumber, "72019",
-                          startDate="2012-01-01", endDate="2012-06-30");
-# display the first row of the data frame
+using DataRetrieval, DataFrames
+siteID = "USGS-393617075380403"
+df, response = WaterData.daily(monitoring_location_id=siteID, 
+                              parameter_code="72019",
+                              time="2012-01-01/2012-06-30");
+
+# Clean up missing values and sort the data
+dropmissing!(df, :value)
+sort!(df, :time)
+
+# display the first row
 first(df)
 ```
 
-We can get additional information about this parameter code, such as the
-units groundwater levels are measured in, by using the `readNWISpCode`
-function.
+Get parameter metadata:
 
 ```@example 393617075380403
-pcodedf, response = readNWISpCode("72019");
+pcodedf, response = WaterData.reference_table("parameter-codes", query=Dict("id" => "72019"));
 pcodedf
 ```
 
-We can see that the units for groundwater levels are feet below land surface.
-Now when we plot the groundwater levels, we can properly label the y-axis.
+Plot the groundwater levels:
 
 ```@example 393617075380403
-# convert the date time column to a DateTime type
-using Dates
-timestamps = Dates.DateTime.(df.datetime, "yyy-mm-dd HH:MM");
-# convert the groundwater level values to a float type
-gwlevels = parse.(Float64, df."276495_72019_00003");
-# make the plot
 using Plots
-plot(timestamps, gwlevels,
+# Use the value column directly
+plot(df.time, df.value,
      title="Groundwater Levels at Site 393617075380403",
-     ylabel="Groundwater Level,\nfeet below land surface",
-     xlabel="Timestamp",
+     ylabel="Depth (ft below land surface)",
+     xlabel="Time",
      xrotation=60,
      label="Groundwater Level",
+     yflip=true,
      dpi=200,
      margin=5Plots.mm)
 ```
 
-## WQP Examples
-These examples use data retrieved from the
-[Water Quality Portal](https://waterqualitydata.us/).
+## NLDI Examples
 
-### Identifying Water Quality Sites with Chloride Measurements
+The Network Linked Data Index (NLDI) API provides functions to navigate flowlines, find basin boundaries, and discover linked features.
 
-In this example we will identify sites that have chloride measurements
-in the state of New Jersey, which is represented by the state code "US:34".
-To do this we query the Water Quality Portal using the `whatWQPsites` function.
+### Finding a Basin
+
+In this example, we find the basin for a specific NWIS site.
+
+```@example nldi_basin
+using DataRetrieval, GeoDataFrames
+df_basin, response = NLDI.basin("nwissite", "USGS-01491000");
+
+# display the basin data frame
+first(df_basin)
+```
+
+### Navigating Flowlines
+
+We can also navigate upstream or downstream from a feature to find flowlines.
+
+```@example nldi_basin
+# Navigate upstream main (UM) up to 10 km
+df_flow, response = NLDI.flowlines("UM", feature_source="nwissite", feature_id="USGS-01491000", distance=10);
+
+# display the flowlines
+first(df_flow)
+```
+
+We can then plot the basin and flowlines geometries directly.
+
+```@example nldi_basin
+using Plots
+p = plot(df_basin.geometry, fillalpha=0.2, c=:blue, label="Basin")
+plot!(p, df_flow.geometry, c=:red, linewidth=2, label="Flowlines UM")
+title!("Site 01491000 Basin & Flowlines")
+```
+
+### Retrieving Linked Features
+
+You can also use NLDI to find all linked features for a given source, or search along navigation lines. We will grab the first few `nwissite` features and view their rich metadata.
+
+```@example nldi_features
+using DataRetrieval, GeoDataFrames
+
+# Retrieve all water quality portal locations
+df_features, response = NLDI.features_by_data_source("nwissite");
+
+# display the properties available
+first(df_features, 3)
+```
+
+## Water Quality Portal (WQP) / Samples API Examples
+
+Modern water quality queries should prefer the `WaterData.results` or `WaterData.samples` functions.
+
+### Identifying Sites with Chloride Measurements
+
+In this example we identify sites with chloride measurements in New Jersey (state code "US:34").
 
 ```@example NJchloride
-using DataRetrieval
-njcl, response = whatWQPsites(statecode="US:34",
-                              characteristicName="Chloride");
-# print the size of the data frame (rows x columns)
-size(njcl)
+using DataRetrieval, DataFrames
+# Find locations with Chloride measurements
+njcl, response = WaterData.locations(state_fips="US:34",
+                                    characteristic="Chloride");
+# print the number of sites found
+nrow(njcl)
 ```
+
+### Retrieving Water Quality Results
+
+We can also retrieve the actual measurements for a specific location.
+
+```@example NJchloride
+# Get narrow profile results for a specific monitoring location
+results, response = WaterData.results(
+    monitoring_location_identifier="USGS-01408029",
+    characteristic="Chloride",
+    activity_start_date_lower="2020-01-01"
+);
+
+# display the first result
+first(results, 1)
+```
+
+## Summary of Modern vs Legacy Functions
+
+| Feature | Modern Function | Legacy Function (Deprecated) |
+|:--- |:--- |:--- |
+| Site Metadata | `WaterData.monitoring_locations` | `NWIS.site` |
+| Daily Values | `WaterData.daily` | `NWIS.dv` |
+| Continuous Values | `WaterData.continuous` | `NWIS.iv` / `NWIS.unit` |
+| Parameter Codes | `WaterData.reference_table` | `NWIS.pcode` |
+| QW Results | `WaterData.samples` / `WaterData.results` | `NWIS.qwdata` |
+| WQP Sites | `WaterData.locations` | `WQP.sites` |

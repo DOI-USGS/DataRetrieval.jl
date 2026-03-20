@@ -1,0 +1,4 @@
+Location_Identifier,Activity_ActivityIdentifier,Activity_ActivityTypeCode,Activity_ActivityMediaName,Activity_ActivityStartDate,Result_CharacteristicName,Result_ResultMeasureValue,Result_ResultMeasure_MeasureUnitCode,Result_ResultStatusIdentifier,Organization_OrganizationIdentifier,Organization_OrganizationFormalName
+USGS-05288705,nwisil.01.01100001,Sample-Routine,Water,2024-10-15,Specific conductance,642,uS/cm @25C,Final,USGS-IL,USGS Illinois Water Science Center
+USGS-05288705,nwisil.01.01100002,Sample-Routine,Water,2024-11-20,pH,8.1,std units,Final,USGS-IL,USGS Illinois Water Science Center
+USGS-05288705,nwisil.01.01100003,Sample-Routine,Water,2024-12-10,Temperature water,5.2,deg C,Final,USGS-IL,USGS Illinois Water Science Center

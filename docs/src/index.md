@@ -6,8 +6,51 @@ based off of the popular R package of the same name. Both R and Python
 versions of data retrieval are available:
 [R](https://github.com/DOI-USGS/dataRetrieval),
 [Python](https://github.com/DOI-USGS/dataretrieval-python). Development of the
-package currently takes place on GitLab, in the
-[DataRetrieval.jl repository](https://code.usgs.gov/water/computational-tools/DataRetrieval.jl).
+package currently takes place on GitHub, in the
+[DataRetrieval.jl repository](https://github.com/DOI-USGS/DataRetrieval.jl).
+
+The Julia package includes support for Nwis, Wqp, and Waterdata samples-data
+queries.
+
+USGS data access is transitioning from legacy NWIS web services to modern
+Water Data APIs. In general, prefer `WaterData.*` functions for new
+workflows when equivalent Julia functionality is available.
+
+For broader upstream migration and status context from the R package, see:
+
+- <https://doi-usgs.github.io/dataRetrieval/articles/read_waterdata_functions.html>
+- <https://doi-usgs.github.io/dataRetrieval/articles/Status.html>
+
+## Service Modules
+
+DataRetrieval.jl provides data from four primary USGS services, each represented by a module:
+
+* **[WaterData](@ref)**: The modernized USGS Water Data API and Samples API. Provides generic OGC API retrieval, daily values, continuous values, monitoring locations, field measurements, series metadata, and chemical sample results. This is the recommended module for new workflows.
+* **[WQP](@ref)**: The Water Quality Portal. Provides water quality data including results, sites, organizations, projects, activities, and detection limits.
+* **[NLDI](@ref)**: The Network Linked Data Index API. Provides functions to navigate flowlines, find upstream/downstream basin boundaries, and discover linked features.
+* **[NWIS](@ref)**: The legacy National Water Information System. Provides historical daily values, instantaneous values, and site metadata. **Note:** Legacy NWIS services are being decommissioned by the USGS. Users are encouraged to migrate to `WaterData` functions.
+
+### What would you like to do?
+
+Use this quick guide to select the right DataRetrieval.jl function family:
+
+1. Instantaneous USGS data: `WaterData.continuous` / `WaterData.latest_continuous` (see [Examples](examples.md#Plotting-Flow-Data-for-Site-01646500))
+2. Daily USGS data: `WaterData.daily` / `WaterData.latest_daily` (see [Examples](examples.md#Examining-Site-01491000))
+3. Discrete USGS groundwater field measurements: `WaterData.field_measurements`
+4. Water Quality Portal data: `WQP.data` / `WQP.results` (see [Examples](examples.md#Water-Quality-Portal-(WQP)-/-Samples-API-Examples))
+5. USGS discrete samples-data: `WaterData.samples` (see [Examples](examples.md#Retrieving-Water-Quality-Results))
+6. USGS time-series metadata: `WaterData.series_metadata`
+7. NLDI discovery and hydrography: `NLDI.search`, `NLDI.features`, `NLDI.flowlines`, `NLDI.basin`
+8. Daily statistics: `WaterData.stats_por`, `WaterData.stats_date_range`
+
+USGS Waterdata APIs may apply stricter rate limits to unauthenticated requests.
+For higher rate limits, register for an API key at
+[https://api.waterdata.usgs.gov/signup/](https://api.waterdata.usgs.gov/signup/)
+and set `ENV["API_USGS_PAT"]` before making requests. You can also set a
+session-only override with `set_token!("...")`.
+
+NWIS legacy endpoints are being decommissioned. For water-quality samples,
+prefer `WaterData.samples` over NWIS `qw/qwdata` workflows.
 
 ## Installation
 
@@ -17,14 +60,14 @@ Currently only installation from the git repository is supported.
 To install the package, you can use the Pkg REPL (hitting `]` from the Julia REPL):
 
 ```julia
-pkg> add https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git
+pkg> add https://github.com/DOI-USGS/DataRetrieval.jl.git
 ```
 
 This is equivalent to the following code using the Julia REPL:
 
 ```julia
 > using Pkg
-> Pkg.add(https://code.usgs.gov/water/computational-tools/DataRetrieval.jl.git)
+> Pkg.add("https://github.com/DOI-USGS/DataRetrieval.jl.git")
 ```
 
 ### Developer Installation
