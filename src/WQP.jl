@@ -7,9 +7,9 @@ activities, detection limits, habitat metrics, project weights, and activity met
 """
 module WQP
 
-using HTTP
-using DataFrames
-using CSV
+import HTTP
+import DataFrames: DataFrame, names
+import CSV
 
 # Import internal utilities from the parent module
 import .._custom_get, .._default_headers, .._query_value

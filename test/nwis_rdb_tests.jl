@@ -129,7 +129,7 @@ end
     @testset "daily values round-trip" begin
         obs_url = "https://waterservices.usgs.gov/nwis/dv/?site=02177000&format=rdb,1.0&ParameterCd=00060&StatCd=00003&startDT=2012-09-01&endDT=2012-10-01"
         df, response = _try_live(service_name="NWIS") do
-            NWIS.read(obs_url)
+            NWIS._get_url(obs_url)
         end
         if df !== nothing
             @test response.status == 200

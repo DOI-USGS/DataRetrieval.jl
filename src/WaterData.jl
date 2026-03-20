@@ -8,10 +8,10 @@ sample results (`samples`, `results`).
 """
 module WaterData
 
-using HTTP
-using JSON
-using DataFrames
-using CSV
+import HTTP
+import JSON
+import DataFrames: DataFrame, rename!, names, nrow, select!, Not
+import CSV
 using Dates
 
 # Import internal utilities from the parent module
@@ -135,7 +135,7 @@ function data(service; cql=nothing, ssl_check=true, kwargs...)
 
   parsed = JSON.parse(String(response.body))
   parsed_pages = Any[parsed]
-  if no_paging == false
+  if !no_paging
     next_url = _next_link(parsed)
     while next_url !== nothing
       page_response = _custom_get(next_url; ssl_check=ssl_check)
@@ -156,7 +156,7 @@ function data(service; cql=nothing, ssl_check=true, kwargs...)
 end
 
 """
-  check_ogc_requests(; endpoint="daily", request_type="queryables", ssl_check=true)
+    ogc_requests(; endpoint="daily", request_type="queryables", ssl_check=true)
 
 Request OGC collection metadata (`queryables` or `schema`) for a Waterdata
 collection.
@@ -522,7 +522,7 @@ function _collect_ogc_pages(url::String,
   parsed = JSON.parse(String(response.body))
   pages = Any[parsed]
 
-  if no_paging == false
+  if !no_paging
     next_url = _next_link(parsed)
     while next_url !== nothing
       page_response = _custom_get(next_url; ssl_check=ssl_check)
@@ -620,9 +620,7 @@ function _flatten_ogc_features(parsed)
 end
 
 function _rename_id!(df::DataFrame, output_id::String)
-  if :id in names(df)
-    rename!(df, :id => Symbol(output_id))
-  elseif "id" in names(df)
+  if "id" in names(df)
     rename!(df, "id" => output_id)
   end
   return df
@@ -694,7 +692,7 @@ function _stats_get(endpoint::String; ssl_check=true, expand_percentiles=true, k
   all_features = Any[]
   append!(all_features, get(parsed, "features", Any[]))
 
-  if no_paging == false
+  if !no_paging
     next_token = get(parsed, "next", nothing)
     while next_token !== nothing && string(next_token) != ""
       query_params["next"] = string(next_token)
