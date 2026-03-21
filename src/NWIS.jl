@@ -10,11 +10,11 @@ migrate to the modernized `DataRetrieval.WaterData` functions (e.g., `WaterData.
 """
 module NWIS
 
-using HTTP
-using JSON
-using DataFrames
-using CSV
-using EzXML
+import HTTP
+import JSON
+import DataFrames: DataFrame, rename!, names, nrow, select!, Not
+import CSV
+import EzXML: parsexml
 using Dates
 
 # Import internal utilities from the parent module
@@ -97,9 +97,9 @@ function url(site_numbers;
     end
 
     # error checking
-    allowed_services = ["dv", "iv", "qw", "site", "qwdata", "statistics", "gwlevels", "rating", "peak", "meas", ""]
-    if !(service in allowed_services) && !is_qw
-        throw(ArgumentError("service must be one of $(join(filter(!isempty, allowed_services), ", "))"))
+    allowed_services = ["dv", "iv", "qw", "site", "qwdata", "statistics", "gwlevels", "rating", "peak", "meas"]
+    if !(orig_service in allowed_services)
+        throw(ArgumentError("service must be one of $(join(allowed_services, ", "))"))
     end
 
     # initialize the query parameters
@@ -229,8 +229,6 @@ function url(site_numbers;
     end
 
 
-
-    # build the final URL
     # build the final URL
     # To satisfy brittle tests, we try to put certain keys first
     # and handle multiple 'column_name' for qw service
@@ -284,12 +282,7 @@ function url(site_numbers;
     return string(base_url, service, "/?", query_string)
 end
 
-"""
-    read(obs_url)
-
-Function to take an Nwis url and return the associated data.
-"""
-function read(obs_url)
+function _get_url(obs_url)
     _warn_decommission_once!()
     response = _custom_get(obs_url)
 
@@ -300,7 +293,7 @@ function read(obs_url)
     elseif occursin("format=json", obs_url)
         df = _read_json(response)
     else
-        throw(ArgumentError("Nwis service returned an HTML error page. This usually indicates an invalid parameter or service failure. Body starts with: $(first(String(response.body), 100))"))
+        throw(ArgumentError("NWIS service returned an HTML error page. This usually indicates an invalid parameter or service failure. Body starts with: $(first(String(response.body), 100))"))
     end
     return df, response
 end
@@ -321,8 +314,7 @@ function dv(site_numbers, parameter_cd;
         format = format,
         service = "dv"
     )
-    df, response = read(obs_url)
-    return df, response
+    return _get_url(obs_url)
 end
 
 """
@@ -345,8 +337,7 @@ Function to obtain site information from the Nwis web service.
 """
 function site(site_numbers)
     obs_url = url(site_numbers, service = "site", format = "rdb")
-    df, response = read(obs_url)
-    return df, response
+    return _get_url(obs_url)
 end
 
 """
@@ -364,8 +355,7 @@ function iv(site_numbers, parameter_cd;
         format = format,
         service = "iv"
     )
-    df, response = read(obs_url)
-    return df, response
+    return _get_url(obs_url)
 end
 
 # Aliases
@@ -445,10 +435,12 @@ function _try_parse_dt(x)
 end
 
 function _read_waterml(response)
-    body = String(response.body)
-    data = parsexml(body)
-    # Placeholder for further implementation
-    return DataFrame()
+    throw(ArgumentError(
+        "WaterML format parsing is not yet implemented in DataRetrieval.jl. " *
+        "Please use format=\"rdb\" (the default) or format=\"json\" instead. " *
+        "If you need WaterML support, please open an issue at " *
+        "https://github.com/DOI-USGS/DataRetrieval.jl/issues"
+    ))
 end
 
 function _read_json(response)

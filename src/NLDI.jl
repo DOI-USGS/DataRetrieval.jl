@@ -11,9 +11,9 @@ load `GeoDataFrames.jl` in your environment (`using GeoDataFrames`).
 """
 module NLDI
 
-using HTTP
-using JSON
-using DataFrames
+import HTTP
+import JSON
+import DataFrames: DataFrame, names, nrow, rename!
 
 # Import internal utilities from the parent module
 import .._custom_get, .._query_value
